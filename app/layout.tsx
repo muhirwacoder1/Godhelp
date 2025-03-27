@@ -4,6 +4,7 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Sidebar } from "@/components/sidebar"
+import { LanguageProvider } from "@/context/language-context"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -22,16 +23,16 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          <div className="flex h-screen bg-white">
-            <Sidebar />
-            <div className="flex-1 overflow-auto">{children}</div>
-          </div>
+          <LanguageProvider>
+            <div className="flex h-screen bg-white">
+              <Sidebar />
+              <div className="flex-1 overflow-auto">{children}</div>
+            </div>
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>
   )
 }
-
-
 
 import './globals.css'
