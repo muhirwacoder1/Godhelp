@@ -19,6 +19,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Switch } from "@/components/ui/switch"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { useLanguage } from "@/context/language-context"
+import Link from "next/link"
 
 // Initial profile data
 const initialProfile = {
@@ -433,8 +434,10 @@ export function ProfileForm() {
                   </div>
                   <h3 className="text-lg font-medium text-gray-800 mb-2">{t.profile.addNewDevice}</h3>
                   <p className="text-sm text-gray-500 text-center mb-4">Connect a new smart insole to your account</p>
-                  <Button className="bg-blue-600 hover:bg-blue-700">
-                    {t.profile.addNewDevice}
+                  <Button className="bg-blue-600 hover:bg-blue-700" asChild>
+                    <Link href="/register-insole">
+                      {t.profile.addNewDevice}
+                    </Link>
                   </Button>
                 </div>
               </div>

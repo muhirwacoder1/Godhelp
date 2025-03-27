@@ -34,7 +34,6 @@ const healthcareProfessionals = [
     availability: ["9:00 AM", "10:00 AM", "2:00 PM", "3:00 PM"],
     color: "bg-blue-100",
     accent: "bg-blue-500",
-    image: "https://randomuser.me/api/portraits/women/44.jpg"
   },
   {
     id: 2,
@@ -43,7 +42,6 @@ const healthcareProfessionals = [
     availability: ["11:00 AM", "1:00 PM", "4:00 PM", "5:00 PM"],
     color: "bg-green-100",
     accent: "bg-green-500",
-    image: "https://randomuser.me/api/portraits/men/32.jpg"
   },
   {
     id: 3,
@@ -52,7 +50,6 @@ const healthcareProfessionals = [
     availability: ["8:00 AM", "12:00 PM", "3:30 PM", "4:30 PM"],
     color: "bg-purple-100",
     accent: "bg-purple-500",
-    image: "https://randomuser.me/api/portraits/women/68.jpg"
   },
 ]
 
@@ -265,16 +262,10 @@ export function AppointmentForm() {
                           : "bg-white hover:bg-gray-50 border border-gray-200"
                       )}
                     >
-                      <div className="w-12 h-12 rounded-full overflow-hidden mr-4 flex-shrink-0">
-                        <img 
-                          src={professional.image} 
-                          alt={professional.name}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.src = `https://ui-avatars.com/api/?name=${professional.name}&background=random`;
-                          }}
-                        />
+                      <div className="w-12 h-12 rounded-full overflow-hidden mr-4 flex-shrink-0 bg-blue-100 flex items-center justify-center">
+                        <span className="text-blue-600 font-semibold text-lg">
+                          {professional.name.split(' ').map(n => n[0]).join('')}
+                        </span>
                       </div>
                       <div className="flex-1">
                         <p className="font-medium text-gray-800">{professional.name}</p>

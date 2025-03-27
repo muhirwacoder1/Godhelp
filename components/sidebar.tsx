@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Heart, Bell, User, Calendar, LogOut, Plus, ChevronLeft, ChevronRight } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -46,10 +47,27 @@ export function Sidebar() {
           "flex items-center gap-2 mb-10", 
           collapsed ? "justify-center" : ""
         )}>
-          <div className="bg-blue-600 text-white w-12 h-12 rounded-lg flex items-center justify-center text-2xl font-bold">
-            a
-          </div>
-          {!collapsed && <span className="text-2xl font-bold">appo</span>}
+          {collapsed ? (
+            <div className="w-12 h-12 relative">
+              <Image 
+                src="/appo-logo.png" 
+                alt="Appo Logo" 
+                width={48} 
+                height={48} 
+                className="object-contain"
+              />
+            </div>
+          ) : (
+            <div className="h-12 relative">
+              <Image 
+                src="/appo-logo.png" 
+                alt="Appo Logo" 
+                width={120} 
+                height={48} 
+                className="object-contain"
+              />
+            </div>
+          )}
         </div>
 
         <nav className="flex-1 flex flex-col gap-4 w-full">
@@ -116,6 +134,22 @@ export function Sidebar() {
           >
             <User className={cn("h-5 w-5", isActive("/profile") ? "text-white" : "text-gray-700")} />
             {!collapsed && <span>Profile</span>}
+          </Link>
+          <Link
+            href="/register-insole"
+            className={cn(
+              "flex items-center rounded-lg font-medium transition-colors",
+              isActive("/register-insole") 
+                ? "text-white bg-blue-600" 
+                : "text-gray-700 hover:bg-gray-100",
+              collapsed 
+                ? "justify-center p-3" 
+                : "p-4 gap-3"
+            )}
+            title="Register New Insole"
+          >
+            <Plus className={cn("h-5 w-5", isActive("/register-insole") ? "text-white" : "text-gray-700")} />
+            {!collapsed && <span>Register New Insole</span>}
           </Link>
         </nav>
 
