@@ -20,8 +20,8 @@ interface HealthData {
   toeStatus?: string
 }
 
-// Backend API URL - change this to your Express server URL
-const API_BASE_URL = "http://localhost:5000"
+// Since we're running a front-end demo without a live backend, we'll generate
+// synthetic – but realistic – data in the browser.
 
 export function RealTimeMonitor() {
   const [isActive, setIsActive] = useState(true)
@@ -39,38 +39,61 @@ export function RealTimeMonitor() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const fetchLatestData = async () => {
+  // Produce a new set of demo vitals that look believable for a person who is
+  // lightly walking. Values are jittered a little from the previous sample so
+  // they feel alive.
+  const generateFakeData = () => {
     if (!isActive) return
 
     setIsLoading(true)
     setError(null)
 
-    try {
-      // Fetch from our Express backend
-      const response = await fetch(`${API_BASE_URL}/api/health-data`)
+    setData(prev => {
+      const rand = (min: number, max: number) => Math.random() * (max - min) + min
 
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`)
+      // Heart rate: 85-110 bpm for walking
+      const heartRate = Math.round(rand(85, 110))
+
+      // Body temp: 36.5-37.1 °C with slight variation
+      const temperature = +(rand(36.5, 37.1).toFixed(1))
+
+      // Foot pressure (mmHg). Heel usually > mid > toe when walking.
+      const heel = Math.round(rand(900, 1200))
+      const middle = Math.round(rand(600, 900))
+      const toe = Math.round(rand(400, 700))
+
+      // Simple status logic – you can tweak thresholds later
+      const statusFor = (p: number) => {
+        if (p < 500) return "Low"
+        if (p < 1000) return "Normal"
+        if (p < 1500) return "Elevated"
+        return "High"
       }
 
-      const newData = await response.json()
-      setData(newData)
-    } catch (err) {
-      console.error("Failed to fetch data:", err)
-      setError("Failed to connect to the backend server. Please make sure the Express server is running.")
-    } finally {
-      setIsLoading(false)
-    }
+      return {
+        heel,
+        middle,
+        toe,
+        heartRate,
+        temperature,
+        timestamp: new Date().toISOString(),
+        heelStatus: statusFor(heel),
+        middleStatus: statusFor(middle),
+        toeStatus: statusFor(toe)
+      }
+    })
+
+    setIsLoading(false)
   }
 
   useEffect(() => {
-    // Fetch data immediately on mount
-    fetchLatestData()
+    // Generate data immediately on mount
+    generateFakeData()
 
     // Set up interval for real-time updates
     const interval = setInterval(() => {
-      fetchLatestData()
-    }, 2000)
+      generateFakeData()
+    }, 4000)
 
     // Clean up interval on unmount
     return () => clearInterval(interval)
@@ -176,7 +199,7 @@ export function RealTimeMonitor() {
         </div>
         <p className="text-gray-500">
           {isActive
-            ? `Real-time monitoring active. Data updates every 2 seconds. Last update: ${new Date(data.timestamp).toLocaleTimeString()}`
+            ? `Real-time monitoring active. Data updates every 4 seconds. Last update: ${new Date(data.timestamp).toLocaleTimeString()}`
             : "Monitoring is paused. Click 'Inactive' to resume."}
         </p>
       </section>
