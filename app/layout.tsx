@@ -4,14 +4,19 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Sidebar } from "@/components/sidebar"
+import { MobileNav } from "@/components/mobile-nav"
 import { LanguageProvider } from "@/context/language-context"
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ 
+  subsets: ["latin"],
+  variable: '--font-inter',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
-  title: "Foot Pressure Dashboard",
-  description: "Monitor foot pressure and health stats in real-time",
-    generator: 'v0.dev'
+  title: "GodHelp - Health Dashboard",
+  description: "Modern mobile health monitoring for foot pressure and vital signs",
+  generator: 'v0.dev'
 }
 
 export default function RootLayout({
@@ -21,12 +26,25 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.variable} font-sans`}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <LanguageProvider>
-            <div className="flex h-screen bg-white">
-              <Sidebar />
-              <div className="flex-1 overflow-auto">{children}</div>
+            <div className="flex h-screen bg-gradient-to-br from-[#F8FAFC] via-[#FFFFFF] to-[#F0F4F8]">
+              {/* Desktop Sidebar - Hidden on mobile */}
+              <div className="hidden lg:block">
+                <Sidebar />
+              </div>
+              
+              {/* Main Content Area */}
+              <div className="flex-1 flex flex-col overflow-hidden bg-transparent">
+                {/* Mobile Header - Only visible on mobile */}
+                <MobileNav />
+                
+                {/* Page Content */}
+                <div className="flex-1 overflow-auto pb-24 lg:pb-0">
+                  {children}
+                </div>
+              </div>
             </div>
           </LanguageProvider>
         </ThemeProvider>

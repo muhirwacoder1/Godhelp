@@ -25,7 +25,7 @@ export function Sidebar() {
   return (
     <div 
       className={cn(
-        "border-r flex flex-col h-full transition-all duration-300 ease-in-out relative bg-white",
+        "border-r border-[#E2E8F0] flex flex-col h-full transition-all duration-300 ease-in-out relative bg-white shadow-[0_4px_6px_rgba(0,0,0,0.07)]",
         collapsed ? "w-[80px]" : "w-[310px]"
       )}
     >
@@ -33,7 +33,7 @@ export function Sidebar() {
         variant="outline"
         size="icon"
         onClick={toggleSidebar}
-        className="absolute -right-4 top-6 h-8 w-8 rounded-full border bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md z-10 hover:from-blue-600 hover:to-blue-700 border-none"
+        className="absolute -right-4 top-6 h-12 w-12 rounded-[12px] border-none bg-[#4A90E2] text-white shadow-[0_4px_6px_rgba(0,0,0,0.07)] z-10 hover:bg-[#2563EB] transition-all duration-200"
         aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
       >
         {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
@@ -70,104 +70,104 @@ export function Sidebar() {
           )}
         </div>
 
-        <nav className="flex-1 flex flex-col gap-4 w-full">
+        <nav className="flex-1 flex flex-col gap-3 w-full">
           <Link
             href="/"
             className={cn(
-              "flex items-center rounded-lg font-medium transition-colors",
+              "flex items-center rounded-[12px] font-medium transition-all duration-200 text-[16px]",
               isActive("/") 
-                ? "text-white bg-blue-600" 
-                : "text-gray-700 hover:bg-gray-100",
+                ? "text-white bg-[#4A90E2] shadow-[0_4px_6px_rgba(0,0,0,0.07)]" 
+                : "text-[#1E293B] hover:bg-[#F8FAFC] hover:shadow-[0_1px_3px_rgba(0,0,0,0.1)]",
               collapsed 
                 ? "justify-center p-3" 
                 : "p-4 gap-3"
             )}
             title="Dashboard"
           >
-            <Heart className={cn("h-5 w-5", isActive("/") ? "text-white" : "text-gray-700")} />
-            {!collapsed && <span>Dashboard</span>}
+            <Heart className={cn("h-6 w-6", isActive("/") ? "text-white" : "text-[#4A90E2]")} />
+            {!collapsed && <span className="font-semibold">Dashboard</span>}
           </Link>
           <Link
             href="/appointments"
             className={cn(
-              "flex items-center rounded-lg font-medium transition-colors",
+              "flex items-center rounded-[12px] font-medium transition-all duration-200 text-[16px]",
               isActive("/appointments") 
-                ? "text-white bg-blue-600" 
-                : "text-gray-700 hover:bg-gray-100",
+                ? "text-white bg-[#4A90E2] shadow-[0_4px_6px_rgba(0,0,0,0.07)]" 
+                : "text-[#1E293B] hover:bg-[#F8FAFC] hover:shadow-[0_1px_3px_rgba(0,0,0,0.1)]",
               collapsed 
                 ? "justify-center p-3" 
                 : "p-4 gap-3"
             )}
             title="Appointments"
           >
-            <Calendar className={cn("h-5 w-5", isActive("/appointments") ? "text-white" : "text-gray-700")} />
-            {!collapsed && <span>Appointments</span>}
+            <Calendar className={cn("h-6 w-6", isActive("/appointments") ? "text-white" : "text-[#8B5CF6]")} />
+            {!collapsed && <span className="font-semibold">Appointments</span>}
           </Link>
           <Link
             href="/notifications"
             className={cn(
-              "flex items-center rounded-lg font-medium transition-colors",
+              "flex items-center rounded-[12px] font-medium transition-all duration-200 text-[16px]",
               isActive("/notifications") 
-                ? "text-white bg-blue-600" 
-                : "text-gray-700 hover:bg-gray-100",
+                ? "text-white bg-[#4A90E2] shadow-[0_4px_6px_rgba(0,0,0,0.07)]" 
+                : "text-[#1E293B] hover:bg-[#F8FAFC] hover:shadow-[0_1px_3px_rgba(0,0,0,0.1)]",
               collapsed 
                 ? "justify-center p-3" 
                 : "p-4 gap-3"
             )}
             title="Notifications"
           >
-            <Bell className={cn("h-5 w-5", isActive("/notifications") ? "text-white" : "text-gray-700")} />
-            {!collapsed && <span>Notifications</span>}
+            <Bell className={cn("h-6 w-6", isActive("/notifications") ? "text-white" : "text-[#F59E0B]")} />
+            {!collapsed && <span className="font-semibold">Notifications</span>}
           </Link>
           <Link
             href="/profile"
             className={cn(
-              "flex items-center rounded-lg font-medium transition-colors",
+              "flex items-center rounded-[12px] font-medium transition-all duration-200 text-[16px]",
               isActive("/profile") 
-                ? "text-white bg-blue-600" 
-                : "text-gray-700 hover:bg-gray-100",
+                ? "text-white bg-[#4A90E2] shadow-[0_4px_6px_rgba(0,0,0,0.07)]" 
+                : "text-[#1E293B] hover:bg-[#F8FAFC] hover:shadow-[0_1px_3px_rgba(0,0,0,0.1)]",
               collapsed 
                 ? "justify-center p-3" 
                 : "p-4 gap-3"
             )}
             title="Profile"
           >
-            <User className={cn("h-5 w-5", isActive("/profile") ? "text-white" : "text-gray-700")} />
-            {!collapsed && <span>Profile</span>}
+            <User className={cn("h-6 w-6", isActive("/profile") ? "text-white" : "text-[#10B981]")} />
+            {!collapsed && <span className="font-semibold">Profile</span>}
           </Link>
           <Link
             href="/register-insole"
             className={cn(
-              "flex items-center rounded-lg font-medium transition-colors",
+              "flex items-center rounded-[12px] font-medium transition-all duration-200 text-[16px]",
               isActive("/register-insole") 
-                ? "text-white bg-blue-600" 
-                : "text-gray-700 hover:bg-gray-100",
+                ? "text-white bg-[#4A90E2] shadow-[0_4px_6px_rgba(0,0,0,0.07)]" 
+                : "text-[#1E293B] hover:bg-[#F8FAFC] hover:shadow-[0_1px_3px_rgba(0,0,0,0.1)]",
               collapsed 
                 ? "justify-center p-3" 
                 : "p-4 gap-3"
             )}
             title="Register New Insole"
           >
-            <Plus className={cn("h-5 w-5", isActive("/register-insole") ? "text-white" : "text-gray-700")} />
-            {!collapsed && <span>Register New Insole</span>}
+            <Plus className={cn("h-6 w-6", isActive("/register-insole") ? "text-white" : "text-[#EC4899]")} />
+            {!collapsed && <span className="font-semibold">Register New Insole</span>}
           </Link>
         </nav>
 
         <div className="mt-auto pt-6">
           {!collapsed && (
-            <div className="bg-blue-50 rounded-lg p-4 mb-6">
+            <div className="bg-[#4A90E2] bg-opacity-10 rounded-[16px] p-5 mb-6">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="font-medium text-blue-900">New Appointment</h3>
-                <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
-                  <Plus className="h-4 w-4 text-blue-600" />
+                <h3 className="text-[16px] font-semibold text-[#1E293B]">New Appointment</h3>
+                <div className="w-8 h-8 rounded-[8px] bg-[#4A90E2] bg-opacity-20 flex items-center justify-center">
+                  <Plus className="h-4 w-4 text-[#4A90E2]" />
                 </div>
               </div>
-              <p className="text-sm text-blue-700 mb-3">
+              <p className="text-[14px] text-[#64748B] mb-4 leading-[20px]">
                 Book your next appointment quickly and easily
               </p>
               <Button 
                 size="sm" 
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                className="w-full bg-[#4A90E2] hover:bg-[#2563EB] text-white rounded-[12px] h-12 text-[16px] font-semibold transition-all duration-200 shadow-none border-none"
                 asChild
               >
                 <Link href="/appointments">Book Now</Link>
@@ -177,11 +177,11 @@ export function Sidebar() {
           <Button 
             variant="outline" 
             className={cn(
-              "w-full border-gray-200 text-gray-700 hover:bg-gray-100 hover:text-gray-900",
-              collapsed ? "justify-center p-3" : "gap-2"
+              "w-full border-[#E2E8F0] text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#1E293B] rounded-[12px] h-12 text-[16px] font-medium transition-all duration-200",
+              collapsed ? "justify-center p-3" : "gap-3"
             )}
           >
-            <LogOut className="h-5 w-5" />
+            <LogOut className="h-6 w-6" />
             {!collapsed && <span>Logout</span>}
           </Button>
         </div>

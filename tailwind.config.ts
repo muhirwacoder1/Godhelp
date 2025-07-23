@@ -10,6 +10,34 @@ const config: Config = {
   ],
   theme: {
   	extend: {
+      fontFamily: {
+        'sans': ['SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+        'inter': ['var(--font-inter)', 'Inter', 'sans-serif'],
+      },
+      fontSize: {
+        'h1': ['28px', { lineHeight: '34px', letterSpacing: '-0.5px', fontWeight: '700' }],
+        'h2': ['22px', { lineHeight: '28px', letterSpacing: '-0.3px', fontWeight: '600' }],
+        'h3': ['18px', { lineHeight: '24px', letterSpacing: '-0.2px', fontWeight: '600' }],
+        'body': ['16px', { lineHeight: '22px', letterSpacing: '0px', fontWeight: '400' }],
+        'body-small': ['14px', { lineHeight: '20px', letterSpacing: '0px', fontWeight: '400' }],
+        'caption': ['12px', { lineHeight: '16px', letterSpacing: '0.1px', fontWeight: '500' }],
+      },
+      spacing: {
+        'xs': '4px',
+        'sm': '8px',
+        'md': '16px',
+        'lg': '24px',
+        'xl': '32px',
+        'xxl': '48px',
+        'mobile-nav': '83px',
+        'safe-bottom': '34px',
+      },
+      boxShadow: {
+        'subtle': '0 1px 3px rgba(0, 0, 0, 0.1)',
+        'card': '0 4px 6px rgba(0, 0, 0, 0.07)',
+        'elevated': '0 10px 15px rgba(0, 0, 0, 0.1)',
+        'modal': '0 25px 50px rgba(0, 0, 0, 0.15)',
+      },
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
@@ -83,11 +111,21 @@ const config: Config = {
   				to: {
   					height: '0'
   				}
-  			}
+  			},
+        'float': {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-4px)' },
+        },
+        'glow': {
+          '0%': { boxShadow: '0 8px 24px rgba(74, 144, 226, 0.4)' },
+          '100%': { boxShadow: '0 12px 32px rgba(74, 144, 226, 0.6)' },
+        }
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
-  			'accordion-up': 'accordion-up 0.2s ease-out'
+  			'accordion-up': 'accordion-up 0.2s ease-out',
+        'float': 'float 3s ease-in-out infinite',
+        'glow': 'glow 2s ease-in-out infinite alternate',
   		}
   	}
   },
