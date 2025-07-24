@@ -1,0 +1,316 @@
+{
+  "designSystem": {
+    "name": "Modern Mobile Navigation Bar",
+    "version": "1.0.0",
+    "description": "A comprehensive design system for creating modern mobile navigation bars with smooth animations and consistent styling"
+  },
+  
+  "colorPalette": {
+    "primary": {
+      "blue600": "#2563eb",
+      "blue700": "#1d4ed8",
+      "blue500": "#3b82f6"
+    },
+    "neutral": {
+      "white": "#ffffff",
+      "gray100": "#f3f4f6",
+      "gray200": "#e5e7eb",
+      "gray800": "#1f2937",
+      "gray900": "#111827"
+    },
+    "semantic": {
+      "background": "#2563eb",
+      "surface": "#ffffff",
+      "onSurface": "#1f2937",
+      "accent": "#ffffff"
+    }
+  },
+  
+  "typography": {
+    "navItem": {
+      "fontSize": "14px",
+      "fontWeight": "500",
+      "lineHeight": "1.2",
+      "letterSpacing": "-0.01em"
+    },
+    "title": {
+      "fontSize": "32px",
+      "fontWeight": "700",
+      "lineHeight": "1.1",
+      "letterSpacing": "-0.02em"
+    }
+  },
+  
+  "spacing": {
+    "xs": "4px",
+    "sm": "8px",
+    "md": "16px",
+    "lg": "24px",
+    "xl": "32px",
+    "xxl": "48px"
+  },
+  
+  "borderRadius": {
+    "sm": "8px",
+    "md": "12px",
+    "lg": "16px",
+    "xl": "24px",
+    "full": "9999px"
+  },
+  
+  "shadows": {
+    "sm": "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+    "md": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+    "lg": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)"
+  },
+  
+  "components": {
+    "navigationBar": {
+      "structure": {
+        "type": "bottom-fixed",
+        "layout": "horizontal-pills",
+        "itemCount": "4-6",
+        "orientation": "horizontal"
+      },
+      "container": {
+        "backgroundColor": "colorPalette.primary.blue600",
+        "padding": {
+          "horizontal": "spacing.md",
+          "vertical": "spacing.lg"
+        },
+        "borderRadius": "borderRadius.xl",
+        "margin": {
+          "horizontal": "spacing.md",
+          "bottom": "spacing.lg"
+        },
+        "shadow": "shadows.lg",
+        "backdropBlur": "8px"
+      },
+      "navItems": {
+        "layout": "flex",
+        "distribution": "space-between",
+        "alignment": "center",
+        "gap": "spacing.sm"
+      }
+    },
+    
+    "navItem": {
+      "default": {
+        "backgroundColor": "transparent",
+        "color": "colorPalette.neutral.white",
+        "opacity": "0.7",
+        "padding": {
+          "horizontal": "spacing.md",
+          "vertical": "spacing.sm"
+        },
+        "borderRadius": "borderRadius.full",
+        "display": "flex",
+        "alignItems": "center",
+        "gap": "spacing.xs",
+        "minWidth": "44px",
+        "minHeight": "44px",
+        "justifyContent": "center"
+      },
+      "active": {
+        "backgroundColor": "colorPalette.neutral.white",
+        "color": "colorPalette.primary.blue600",
+        "opacity": "1",
+        "shadow": "shadows.sm",
+        "transform": "scale(1.05)"
+      },
+      "hover": {
+        "opacity": "0.9",
+        "transform": "scale(1.02)"
+      }
+    },
+    
+    "icon": {
+      "size": "20px",
+      "strokeWidth": "2px",
+      "style": "outline"
+    },
+    
+    "label": {
+      "typography": "typography.navItem",
+      "display": "flex",
+      "whiteSpace": "nowrap"
+    }
+  },
+  
+  "animations": {
+    "stateTransition": {
+      "duration": "200ms",
+      "easing": "cubic-bezier(0.4, 0.0, 0.2, 1)",
+      "properties": [
+        "background-color",
+        "color",
+        "transform",
+        "opacity",
+        "box-shadow"
+      ]
+    },
+    "entrance": {
+      "duration": "300ms",
+      "easing": "cubic-bezier(0.34, 1.56, 0.64, 1)",
+      "keyframes": {
+        "from": {
+          "transform": "translateY(100%) scale(0.9)",
+          "opacity": "0"
+        },
+        "to": {
+          "transform": "translateY(0) scale(1)",
+          "opacity": "1"
+        }
+      }
+    },
+    "itemSwitch": {
+      "duration": "250ms",
+      "easing": "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+      "stagger": "50ms",
+      "sequence": [
+        {
+          "step": "deactivate-current",
+          "properties": {
+            "backgroundColor": "transparent",
+            "color": "colorPalette.neutral.white",
+            "transform": "scale(1)"
+          }
+        },
+        {
+          "step": "activate-new",
+          "properties": {
+            "backgroundColor": "colorPalette.neutral.white",
+            "color": "colorPalette.primary.blue600",
+            "transform": "scale(1.05)"
+          }
+        }
+      ]
+    },
+    "microInteractions": {
+      "tapFeedback": {
+        "duration": "150ms",
+        "transform": "scale(0.95)",
+        "opacity": "0.8"
+      },
+      "ripple": {
+        "duration": "400ms",
+        "spread": "24px",
+        "opacity": "0.2"
+      }
+    }
+  },
+  
+  "layoutPatterns": {
+    "mobileFirst": {
+      "breakpoints": {
+        "mobile": "320px-768px",
+        "tablet": "768px-1024px",
+        "desktop": "1024px+"
+      },
+      "positioning": {
+        "mobile": "bottom-fixed",
+        "tablet": "bottom-fixed",
+        "desktop": "side-rail-optional"
+      }
+    },
+    
+    "responsiveGrid": {
+      "mobile": {
+        "columns": "auto-fit",
+        "itemMinWidth": "44px",
+        "itemMaxWidth": "120px",
+        "gap": "spacing.sm"
+      }
+    }
+  },
+  
+  "accessibility": {
+    "focusIndicator": {
+      "outline": "2px solid colorPalette.neutral.white",
+      "outlineOffset": "2px",
+      "borderRadius": "borderRadius.full"
+    },
+    "touchTarget": {
+      "minSize": "44px",
+      "padding": "spacing.sm"
+    },
+    "contrast": {
+      "minimum": "4.5:1",
+      "enhanced": "7:1"
+    },
+    "screenReader": {
+      "labels": "descriptive",
+      "states": "announced",
+      "landmarks": "navigation"
+    }
+  },
+  
+  "states": {
+    "default": "inactive item state",
+    "active": "currently selected item",
+    "hover": "pointer hover state",
+    "focus": "keyboard focus state",
+    "pressed": "touch/click feedback",
+    "disabled": "unavailable item state"
+  },
+  
+  "implementationGuidelines": {
+    "coreStructure": {
+      "container": "Fixed positioned wrapper with backdrop blur",
+      "itemsWrapper": "Flexbox container with space-between distribution",
+      "navItem": "Interactive pill-shaped buttons with icons and optional labels"
+    },
+    
+    "keyFeatures": {
+      "pillDesign": "Rounded pill-shaped nav items with distinct active state",
+      "colorInversion": "Active items use inverted color scheme (white bg, blue text)",
+      "smoothTransitions": "All state changes animated with easing curves",
+      "touchOptimized": "44px minimum touch targets with proper spacing",
+      "visualHierarchy": "Clear distinction between active and inactive states"
+    },
+    
+    "technicalRequirements": {
+      "cssFeatures": [
+        "backdrop-filter",
+        "transform",
+        "transition",
+        "box-shadow",
+        "border-radius"
+      ],
+      "jsFeatures": [
+        "state management",
+        "event handling",
+        "animation sequencing",
+        "accessibility support"
+      ]
+    },
+    
+    "performanceConsiderations": {
+      "animations": "Use transform and opacity for GPU acceleration",
+      "repaints": "Avoid layout-triggering properties during animations",
+      "memory": "Clean up event listeners and animation frames",
+      "battery": "Reduce motion for users with vestibular disorders preference"
+    }
+  },
+  
+  "variations": {
+    "itemStyles": {
+      "iconOnly": "Icons without text labels",
+      "iconWithLabel": "Icons with descriptive text",
+      "textOnly": "Text-based navigation items"
+    },
+    
+    "layouts": {
+      "equal": "Items distributed equally across width",
+      "centered": "Items centered with consistent spacing",
+      "weighted": "Important items get more space"
+    },
+    
+    "themes": {
+      "light": "Light background with dark items",
+      "dark": "Dark background with light items",
+      "glass": "Translucent background with backdrop blur",
+      "gradient": "Gradient background with adaptive text colors"
+    }
+  }
+}
