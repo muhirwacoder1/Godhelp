@@ -25,8 +25,57 @@ interface HealthData {
 // Since we're running a front-end demo without a live backend, we'll generate
 // synthetic – but realistic – data in the browser.
 
+// WiFi devices interface
+interface WiFiDevice {
+  id: string
+  name: string
+  signalStrength: number
+  isConnected: boolean
+  requiresPassword: boolean
+  password?: string
+  batteryLevel?: number
+  showBattery?: boolean
+}
+
 export function RealTimeMonitor() {
   const [isActive, setIsActive] = useState(true)
+  const [showWiFiPopup, setShowWiFiPopup] = useState(false)
+  const [showPasswordPopup, setShowPasswordPopup] = useState(false)
+  const [selectedDevice, setSelectedDevice] = useState<WiFiDevice | null>(null)
+  const [passwordInput, setPasswordInput] = useState('')
+  const [passwordError, setPasswordError] = useState('')
+  const [connectingDevice, setConnectingDevice] = useState<string | null>(null)
+  const [successNotification, setSuccessNotification] = useState<string | null>(null)
+  const [wifiDevices, setWifiDevices] = useState<WiFiDevice[]>([
+    { 
+      id: '1', 
+      name: 'Neem Insole 1', 
+      signalStrength: 85, 
+      isConnected: false, 
+      requiresPassword: true, 
+      password: 'neemgroup1',
+      batteryLevel: 78,
+      showBattery: true
+    },
+    { 
+      id: '2', 
+      name: 'Neem Insole 2', 
+      signalStrength: 72, 
+      isConnected: false, 
+      requiresPassword: true, 
+      password: 'neemgroup2',
+      batteryLevel: 65,
+      showBattery: true
+    },
+    { 
+      id: '3', 
+      name: 'Samsung Galaxy A54', 
+      signalStrength: 90, 
+      isConnected: false, 
+      requiresPassword: false,
+      showBattery: false
+    }
+  ])
   const [data, setData] = useState<HealthData>({
     heel: 73,
     middle: 137,
@@ -88,6 +137,57 @@ export function RealTimeMonitor() {
     setIsLoading(false)
   }
 
+  // Handle WiFi device connection
+  const handleConnectDevice = async (device: WiFiDevice) => {
+    if (device.requiresPassword) {
+      setSelectedDevice(device)
+      setShowPasswordPopup(true)
+      setPasswordInput('')
+      setPasswordError('')
+      return
+    }
+    
+    // Direct connection for devices without password
+    await connectToDevice(device.id)
+  }
+
+  // Handle password submission
+  const handlePasswordSubmit = async () => {
+    if (!selectedDevice) return
+    
+    if (passwordInput === selectedDevice.password) {
+      setShowPasswordPopup(false)
+      await connectToDevice(selectedDevice.id)
+    } else {
+      setPasswordError('Incorrect password. Please try again.')
+    }
+  }
+
+  // Connect to device
+  const connectToDevice = async (deviceId: string) => {
+    setConnectingDevice(deviceId)
+    
+    // Simulate connection process
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    
+    const device = wifiDevices.find(d => d.id === deviceId)
+    
+    setWifiDevices(prev => prev.map(device => ({
+      ...device,
+      isConnected: device.id === deviceId ? true : false
+    })))
+    
+    setConnectingDevice(null)
+    setIsActive(true)
+    setShowWiFiPopup(false)
+    
+    // Show success notification
+    if (device) {
+      setSuccessNotification(`${device.name} connected successfully!`)
+      setTimeout(() => setSuccessNotification(null), 3000)
+    }
+  }
+
   useEffect(() => {
     // Generate data immediately on mount
     generateFakeData()
@@ -137,29 +237,27 @@ export function RealTimeMonitor() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-[#4A90E2] rounded-[12px] flex items-center justify-center">
-              <Activity className="h-6 w-6 text-white" />
+              <img 
+                src="/icons/signal-stream.svg" 
+                alt="Signal Stream" 
+                className="h-6 w-6 text-white filter brightness-0 invert"
+              />
             </div>
             <div>
               <h3 className="text-[18px] leading-[24px] font-semibold text-[#1E293B] tracking-[-0.2px]">
-                Monitoring Status
+                Status
               </h3>
               <p className="text-[12px] leading-[16px] text-[#64748B] font-medium tracking-[0.1px]">
-                {isActive
-                  ? `Last update: ${new Date(data.timestamp).toLocaleTimeString()}`
-                  : "Monitoring paused"}
+                {isActive ? "Active" : "Disconnected"}
               </p>
             </div>
           </div>
           <div
-            className={`px-4 py-2 rounded-[999px] cursor-pointer transition-all duration-200 ${
-              isActive 
-                ? "bg-[#10B981] text-white" 
-                : "bg-[#E2E8F0] text-[#64748B]"
-            }`}
-            onClick={() => setIsActive(!isActive)}
+            className="px-4 py-2 rounded-[999px] cursor-pointer transition-all duration-200 bg-[#4A90E2] text-white hover:bg-[#3A7BD5]"
+            onClick={() => setShowWiFiPopup(true)}
           >
             <span className="text-[14px] font-medium">
-              {isLoading ? "Updating..." : isActive ? "Active" : "Inactive"}
+              Connect
             </span>
           </div>
         </div>
@@ -329,6 +427,181 @@ export function RealTimeMonitor() {
           </div>
         </div>
       </div>
+
+      {/* WiFi Connection Popup */}
+      {showWiFiPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white/90 backdrop-blur-xl border border-white/20 rounded-[24px] p-6 w-full max-w-md shadow-[0_20px_40px_rgba(0,0,0,0.15)]">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-[20px] leading-[24px] font-semibold text-[#1E293B] tracking-[-0.2px]">
+                Available Devices
+              </h3>
+              <button
+                onClick={() => setShowWiFiPopup(false)}
+                className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+              >
+                <span className="text-gray-600 text-lg font-bold">×</span>
+              </button>
+            </div>
+
+            {/* WiFi Devices List */}
+            <div className="space-y-3">
+              {wifiDevices.map((device) => (
+                <div
+                  key={device.id}
+                  className="bg-white/60 backdrop-blur-sm border border-white/30 rounded-[16px] p-4 flex items-center justify-between"
+                >
+                  <div className="flex items-center gap-3">
+                    {/* Signal Strength Icon */}
+                    <div className="w-10 h-10 bg-[#4A90E2]/10 rounded-[10px] flex items-center justify-center">
+                      <img 
+                        src="/icons/signal-stream.svg" 
+                        alt="Signal" 
+                        className="h-5 w-5 opacity-70"
+                      />
+                    </div>
+                    
+                    <div>
+                      <h4 className="text-[16px] leading-[20px] font-medium text-[#1E293B] tracking-[-0.1px]">
+                        {device.name}
+                      </h4>
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
+                          {[...Array(4)].map((_, i) => (
+                            <div
+                              key={i}
+                              className={`w-1 h-3 rounded-full ${
+                                i < Math.floor(device.signalStrength / 25)
+                                  ? 'bg-[#10B981]'
+                                  : 'bg-gray-300'
+                              }`}
+                            />
+                          ))}
+                        </div>
+                        <span className="text-[12px] text-[#64748B] font-medium">
+                          {device.signalStrength}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    {/* Battery Level for Insoles */}
+                    {device.batteryLevel && (
+                      <div className="flex items-center gap-1">
+                        <img 
+                          src="/components/battery.png" 
+                          alt="Battery" 
+                          className="h-4 w-4"
+                        />
+                        <span className="text-[12px] text-[#64748B] font-medium">
+                          {device.batteryLevel}%
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Connect Button */}
+                    <button
+                      onClick={() => handleConnectDevice(device)}
+                      disabled={connectingDevice === device.id}
+                      className={`px-4 py-2 rounded-[999px] text-[14px] font-medium transition-all duration-200 ${
+                        device.isConnected
+                          ? 'bg-[#10B981] text-white'
+                          : connectingDevice === device.id
+                          ? 'bg-[#F59E0B] text-white'
+                          : 'bg-[#4A90E2] text-white hover:bg-[#3A7BD5]'
+                      }`}
+                    >
+                      {device.isConnected
+                        ? 'Connected'
+                        : connectingDevice === device.id
+                        ? 'Connecting...'
+                        : 'Connect'
+                      }
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Footer */}
+            <div className="mt-6 text-center">
+              <p className="text-[12px] text-[#64748B] font-medium">
+                Select a device to connect and start monitoring
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Password Input Popup */}
+      {showPasswordPopup && selectedDevice && (
+        <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-white/95 backdrop-blur-xl border border-white/30 rounded-[24px] p-6 w-full max-w-sm shadow-[0_20px_40px_rgba(0,0,0,0.2)]">
+            {/* Header */}
+            <div className="text-center mb-6">
+              <h3 className="text-[20px] leading-[24px] font-semibold text-[#1E293B] tracking-[-0.2px] mb-2">
+                Enter Password
+              </h3>
+              <p className="text-[14px] text-[#64748B] font-medium">
+                Connect to {selectedDevice.name}
+              </p>
+            </div>
+
+            {/* Password Input */}
+            <div className="mb-4">
+              <input
+                type="password"
+                value={passwordInput}
+                onChange={(e) => setPasswordInput(e.target.value)}
+                placeholder="Enter device password"
+                className="w-full px-4 py-3 bg-white/60 backdrop-blur-sm border border-white/30 rounded-[16px] text-[16px] text-[#1E293B] placeholder-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#4A90E2] focus:border-transparent"
+                onKeyPress={(e) => e.key === 'Enter' && handlePasswordSubmit()}
+              />
+              {passwordError && (
+                <p className="text-[12px] text-red-500 mt-2 font-medium">
+                  {passwordError}
+                </p>
+              )}
+            </div>
+
+            {/* Buttons */}
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowPasswordPopup(false)
+                  setPasswordError('')
+                  setPasswordInput('')
+                }}
+                className="flex-1 px-4 py-3 bg-gray-100 text-[#64748B] rounded-[16px] text-[14px] font-medium hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handlePasswordSubmit}
+                className="flex-1 px-4 py-3 bg-[#4A90E2] text-white rounded-[16px] text-[14px] font-medium hover:bg-[#3A7BD5] transition-colors"
+              >
+                Connect
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success Notification */}
+      {successNotification && (
+        <div className="fixed top-4 right-4 z-50 bg-[#10B981] text-white px-6 py-4 rounded-[16px] shadow-[0_8px_32px_rgba(16,185,129,0.3)] backdrop-blur-sm animate-slide-in">
+          <div className="flex items-center gap-3">
+            <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
+              <span className="text-white text-sm font-bold">✓</span>
+            </div>
+            <span className="text-[14px] font-medium">
+              {successNotification}
+            </span>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

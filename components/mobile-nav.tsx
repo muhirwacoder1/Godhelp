@@ -17,7 +17,7 @@ const navItems = [
   },
   {
     href: "/appointments",
-    icon: "/icons/clock.svg", 
+    icon: "/icons/clock.svg",
     label: "Appointments",
     id: "appointments"
   },
@@ -30,13 +30,15 @@ const navItems = [
   {
     href: "/more",
     icon: "/icons/more.png",
-    label: "More", 
+    label: "More",
     id: "more"
   }
 ]
 
 export function MobileNav() {
   const pathname = usePathname()
+  const [showNotifications, setShowNotifications] = useState(false)
+  const [hasNotifications] = useState(false) // Set to true when there are notifications
   const [user] = useState({
     name: "John Doe",
     avatar: "/icons/user.png",
@@ -72,25 +74,32 @@ export function MobileNav() {
           {/* Right: Notification Bell and Settings */}
           <div className="flex items-center gap-4">
             <div className="relative">
-              <Image 
-                src="/icons/bell.svg" 
-                alt="Notifications" 
-                width={24} 
-                height={24} 
-                className="icon-hover icon-filter-inactive hover:icon-filter-active transition-all duration-200"
-              />
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#EC4899] rounded-full border-2 border-white"></div>
+              <button
+                onClick={() => setShowNotifications(true)}
+                className="relative"
+              >
+                <Image
+                  src="/icons/bell.svg"
+                  alt="Notifications"
+                  width={24}
+                  height={24}
+                  className="icon-hover icon-filter-inactive hover:icon-filter-active transition-all duration-200"
+                />
+                {hasNotifications && (
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#EC4899] rounded-full border-2 border-white"></div>
+                )}
+              </button>
             </div>
-            <Image 
-              src="/icons/settings.svg" 
-              alt="Settings" 
-              width={24} 
-              height={24} 
+            <Image
+              src="/icons/settings.svg"
+              alt="Settings"
+              width={24}
+              height={24}
               className="icon-hover icon-filter-inactive hover:icon-filter-active transition-all duration-200 cursor-pointer"
             />
           </div>
         </div>
-        
+
         {/* Greeting Below */}
         <div>
           <p className="text-[28px] leading-[34px] font-bold text-[#1E293B] tracking-[-0.5px]">
@@ -125,31 +134,31 @@ export function MobileNav() {
               >
                 {/* Icon */}
                 <div className="flex items-center justify-center">
-                  <Image 
+                  <Image
                     src={item.icon}
                     alt={item.label}
                     width={20}
                     height={20}
                     className={cn(
                       "transition-all duration-300",
-                      isActive(item.href) 
+                      isActive(item.href)
                         ? "brightness-0 saturate-100" // Dark icon for active state
                         : "brightness-0 invert" // White icon for inactive state
                     )}
                   />
-                  
+
                   {/* Notification badge for appointments */}
                   {item.id === "appointments" && (
                     <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full border border-[#2563eb]"></div>
                   )}
                 </div>
-                
+
                 {/* Label - only visible when active */}
-                <span 
+                <span
                   className={cn(
                     "text-[14px] font-medium leading-[1.2] tracking-[-0.01em] whitespace-nowrap transition-all duration-300",
-                    isActive(item.href) 
-                      ? "ml-2 opacity-100 max-w-[100px]" 
+                    isActive(item.href)
+                      ? "ml-2 opacity-100 max-w-[100px]"
                       : "ml-0 opacity-0 max-w-0 overflow-hidden"
                   )}
                 >
@@ -160,6 +169,42 @@ export function MobileNav() {
           </div>
         </nav>
       </div>
+
+      {/* No Notifications Full Screen Overlay */}
+      {showNotifications && !hasNotifications && (
+        <div
+          className="notification-overlay fixed inset-0 z-[100]"
+          onClick={() => setShowNotifications(false)}
+        >
+          {/* Full Screen Background Image */}
+          <div className="relative w-full h-full">
+            <Image
+              src="/icons/no notification.jpg"
+              alt="No notifications"
+              fill
+              className="object-cover"
+              priority
+            />
+
+            {/* Black Text Overlay */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-center">
+                <h1 className="text-black text-4xl font-bold mb-4 drop-shadow-lg">
+                  No Notification
+                </h1>
+              </div>
+            </div>
+
+            {/* Close button */}
+            <button
+              onClick={() => setShowNotifications(false)}
+              className="absolute top-8 right-8 w-12 h-12 bg-white/90 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform backdrop-blur-sm"
+            >
+              <span className="text-black text-2xl font-bold">×</span>
+            </button>
+          </div>
+        </div>
+      )}
     </>
   )
 }
