@@ -11,7 +11,15 @@ import {
   BarChart3,
   ChevronRight,
   Eye,
-  EyeOff
+  EyeOff,
+  MoreHorizontal,
+  Calculator,
+  Apple,
+  Zap,
+  X,
+  User,
+  Ruler,
+  Scale
 } from "lucide-react"
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import {
@@ -23,6 +31,8 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import {
   ChartConfig,
   ChartContainer,
@@ -81,6 +91,21 @@ export function RealTimeMonitor() {
   const [ulcerRiskData, setUlcerRiskData] = useState<UlcerRiskData[]>([])
   const [showAnalytics, setShowAnalytics] = useState(false)
   const [selectedFoot, setSelectedFoot] = useState<'left' | 'right'>('left')
+  const [showMoreFeatures, setShowMoreFeatures] = useState(false)
+  const [activeFeature, setActiveFeature] = useState<'bmi' | 'nutrition' | 'heartrate' | null>(null)
+  
+  // BMI Calculator state
+  const [bmiData, setBmiData] = useState({
+    height: '',
+    weight: '',
+    bmi: 0,
+    category: ''
+  })
+  
+  // Heart rate measurement state
+  const [isHeartRateMeasuring, setIsHeartRateMeasuring] = useState(false)
+  const [heartRateProgress, setHeartRateProgress] = useState(0)
+  const [measuredHeartRate, setMeasuredHeartRate] = useState(0)
   const [wifiDevices, setWifiDevices] = useState<WiFiDevice[]>([
     {
       id: '1',
@@ -132,6 +157,22 @@ export function RealTimeMonitor() {
     )
   }
 
+  // Check which specific insoles are connected
+  const getConnectedInsoles = () => {
+    const insole1Connected = wifiDevices.find(device => 
+      device.name === 'Neem Insole 1' && device.isConnected
+    )
+    const insole2Connected = wifiDevices.find(device => 
+      device.name === 'Neem Insole 2' && device.isConnected
+    )
+    
+    return {
+      rightFoot: insole1Connected ? true : false, // Insole 1 = Right foot
+      leftFoot: insole2Connected ? true : false,  // Insole 2 = Left foot
+      bothConnected: insole1Connected && insole2Connected
+    }
+  }
+
   // Generate ulcer risk analytics data
   const generateUlcerRiskData = () => {
     if (!connectionStartTime || !isInsoleConnected()) return
@@ -147,8 +188,14 @@ export function RealTimeMonitor() {
 
       // Generate realistic ulcer risk data (keeping below 3%)
       const baseRisk = 0.5 + Math.random() * 1.5 // 0.5% to 2%
-      const leftFootRisk = Math.min(baseRisk + Math.random() * 0.5, 2.8)
-      const rightFootRisk = Math.min(baseRisk + Math.random() * 0.5, 2.8)
+      const connectedInsoles = getConnectedInsoles()
+      
+      const leftFootRisk = connectedInsoles.leftFoot 
+        ? Math.min(baseRisk + Math.random() * 0.5, 2.8)
+        : 0
+      const rightFootRisk = connectedInsoles.rightFoot 
+        ? Math.min(baseRisk + Math.random() * 0.5, 2.8)
+        : 0
 
       newData.push({
         hour: hourStr,
@@ -304,6 +351,90 @@ export function RealTimeMonitor() {
     // Clean up interval on unmount
     return () => clearInterval(interval)
   }, [isActive, wifiDevices, connectionStartTime])
+
+  // Auto-select foot when only one insole is connected
+  useEffect(() => {
+    const connectedInsoles = getConnectedInsoles()
+    if (!connectedInsoles.bothConnected) {
+      if (connectedInsoles.leftFoot) {
+        setSelectedFoot('left')
+      } else if (connectedInsoles.rightFoot) {
+        setSelectedFoot('right')
+      }
+    }
+  }, [wifiDevices])
+
+  // BMI Calculator functions
+  const calculateBMI = () => {
+    const heightInM = parseFloat(bmiData.height) / 100
+    const weightInKg = parseFloat(bmiData.weight)
+    
+    if (heightInM > 0 && weightInKg > 0) {
+      const bmi = weightInKg / (heightInM * heightInM)
+      let category = ''
+      
+      if (bmi < 18.5) category = 'Underweight'
+      else if (bmi < 25) category = 'Normal weight'
+      else if (bmi < 30) category = 'Overweight'
+      else category = 'Obese'
+      
+      setBmiData(prev => ({ ...prev, bmi: Number(bmi.toFixed(1)), category }))
+    }
+  }
+
+  // Heart rate measurement simulation
+  const startHeartRateMeasurement = () => {
+    setIsHeartRateMeasuring(true)
+    setHeartRateProgress(0)
+    setMeasuredHeartRate(0)
+    
+    const interval = setInterval(() => {
+      setHeartRateProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval)
+          setIsHeartRateMeasuring(false)
+          // Simulate measured heart rate (85-110 bpm)
+          const simulatedRate = Math.round(85 + Math.random() * 25)
+          setMeasuredHeartRate(simulatedRate)
+          return 100
+        }
+        return prev + 2
+      })
+    }, 100)
+  }
+
+  // Nutritional recommendations based on BMI and activity
+  const getNutritionalRecommendations = () => {
+    const recommendations = {
+      underweight: [
+        "Increase caloric intake with nutrient-dense foods",
+        "Include healthy fats like avocados, nuts, and olive oil",
+        "Eat frequent, smaller meals throughout the day",
+        "Focus on protein-rich foods for muscle building"
+      ],
+      normal: [
+        "Maintain balanced diet with fruits and vegetables",
+        "Stay hydrated with 8-10 glasses of water daily",
+        "Include lean proteins and whole grains",
+        "Limit processed foods and added sugars"
+      ],
+      overweight: [
+        "Create a moderate caloric deficit for weight loss",
+        "Increase fiber intake with vegetables and fruits",
+        "Choose lean proteins and reduce portion sizes",
+        "Limit refined carbohydrates and sugary drinks"
+      ],
+      obese: [
+        "Consult with a healthcare provider for a weight loss plan",
+        "Focus on whole, unprocessed foods",
+        "Increase physical activity gradually",
+        "Consider meal planning and portion control"
+      ]
+    }
+    
+    const category = bmiData.category.toLowerCase().replace(' weight', '')
+    return recommendations[category as keyof typeof recommendations] || recommendations.normal
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F8FAFC] via-[#FFFFFF] to-[#F0F4F8] p-4 lg:p-6">
@@ -597,45 +728,51 @@ export function RealTimeMonitor() {
             ) : !showAnalytics ? (
               <div className="space-y-6">
                 {/* Summary Stats */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="bg-gradient-to-br from-[#10B981]/10 to-[#059669]/10 rounded-[16px] p-4 border border-[#10B981]/20">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="w-8 h-8 bg-[#10B981] rounded-[8px] flex items-center justify-center">
-                        <TrendingUp className="h-4 w-4 text-white" />
+                <div className={`grid grid-cols-1 gap-4 ${getConnectedInsoles().bothConnected ? 'md:grid-cols-3' : 'md:grid-cols-2'}`}>
+                  {getConnectedInsoles().bothConnected && (
+                    <div className="bg-gradient-to-br from-[#10B981]/10 to-[#059669]/10 rounded-[16px] p-4 border border-[#10B981]/20">
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="w-8 h-8 bg-[#10B981] rounded-[8px] flex items-center justify-center">
+                          <TrendingUp className="h-4 w-4 text-white" />
+                        </div>
+                        <span className="text-[12px] font-medium text-[#10B981] uppercase tracking-wide">Average Risk</span>
                       </div>
-                      <span className="text-[12px] font-medium text-[#10B981] uppercase tracking-wide">Average Risk</span>
+                      <p className="text-[24px] font-bold text-[#1E293B] mb-1">
+                        {((ulcerRiskData.reduce((acc, curr) => acc + curr.leftFoot + curr.rightFoot, 0) / (ulcerRiskData.length * 2)) || 0).toFixed(2)}%
+                      </p>
+                      <p className="text-[12px] text-[#64748B]">Both feet combined</p>
                     </div>
-                    <p className="text-[24px] font-bold text-[#1E293B] mb-1">
-                      {((ulcerRiskData.reduce((acc, curr) => acc + curr.leftFoot + curr.rightFoot, 0) / (ulcerRiskData.length * 2)) || 0).toFixed(2)}%
-                    </p>
-                    <p className="text-[12px] text-[#64748B]">Both feet combined</p>
-                  </div>
+                  )}
 
-                  <div className="bg-gradient-to-br from-[#3B82F6]/10 to-[#1D4ED8]/10 rounded-[16px] p-4 border border-[#3B82F6]/20">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="w-8 h-8 bg-[#3B82F6] rounded-[8px] flex items-center justify-center">
-                        <Footprints className="h-4 w-4 text-white" />
+                  {getConnectedInsoles().leftFoot && (
+                    <div className="bg-gradient-to-br from-[#3B82F6]/10 to-[#1D4ED8]/10 rounded-[16px] p-4 border border-[#3B82F6]/20">
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="w-8 h-8 bg-[#3B82F6] rounded-[8px] flex items-center justify-center">
+                          <Footprints className="h-4 w-4 text-white" />
+                        </div>
+                        <span className="text-[12px] font-medium text-[#3B82F6] uppercase tracking-wide">Left Foot</span>
                       </div>
-                      <span className="text-[12px] font-medium text-[#3B82F6] uppercase tracking-wide">Left Foot</span>
+                      <p className="text-[24px] font-bold text-[#1E293B] mb-1">
+                        {ulcerRiskData[ulcerRiskData.length - 1]?.leftFoot || 0}%
+                      </p>
+                      <p className="text-[12px] text-[#64748B]">Current risk level</p>
                     </div>
-                    <p className="text-[24px] font-bold text-[#1E293B] mb-1">
-                      {ulcerRiskData[ulcerRiskData.length - 1]?.leftFoot || 0}%
-                    </p>
-                    <p className="text-[12px] text-[#64748B]">Current risk level</p>
-                  </div>
+                  )}
 
-                  <div className="bg-gradient-to-br from-[#8B5CF6]/10 to-[#7C3AED]/10 rounded-[16px] p-4 border border-[#8B5CF6]/20">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="w-8 h-8 bg-[#8B5CF6] rounded-[8px] flex items-center justify-center">
-                        <Footprints className="h-4 w-4 text-white" />
+                  {getConnectedInsoles().rightFoot && (
+                    <div className="bg-gradient-to-br from-[#8B5CF6]/10 to-[#7C3AED]/10 rounded-[16px] p-4 border border-[#8B5CF6]/20">
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="w-8 h-8 bg-[#8B5CF6] rounded-[8px] flex items-center justify-center">
+                          <Footprints className="h-4 w-4 text-white" />
+                        </div>
+                        <span className="text-[12px] font-medium text-[#8B5CF6] uppercase tracking-wide">Right Foot</span>
                       </div>
-                      <span className="text-[12px] font-medium text-[#8B5CF6] uppercase tracking-wide">Right Foot</span>
+                      <p className="text-[24px] font-bold text-[#1E293B] mb-1">
+                        {ulcerRiskData[ulcerRiskData.length - 1]?.rightFoot || 0}%
+                      </p>
+                      <p className="text-[12px] text-[#64748B]">Current risk level</p>
                     </div>
-                    <p className="text-[24px] font-bold text-[#1E293B] mb-1">
-                      {ulcerRiskData[ulcerRiskData.length - 1]?.rightFoot || 0}%
-                    </p>
-                    <p className="text-[12px] text-[#64748B]">Current risk level</p>
-                  </div>
+                  )}
                 </div>
 
                 {/* Status Indicator */}
@@ -646,7 +783,13 @@ export function RealTimeMonitor() {
                       <div>
                         <p className="text-[14px] font-semibold text-[#1E293B]">Monitoring Active</p>
                         <p className="text-[12px] text-[#64748B]">
-                          Started {connectionStartTime?.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} • All values below 3%
+                          Started {connectionStartTime?.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} • 
+                          {getConnectedInsoles().bothConnected 
+                            ? ' Both feet monitored' 
+                            : getConnectedInsoles().leftFoot 
+                              ? ' Left foot monitored' 
+                              : ' Right foot monitored'
+                          } • All values below 3%
                         </p>
                       </div>
                     </div>
@@ -660,54 +803,83 @@ export function RealTimeMonitor() {
               </div>
             ) : (
               <div className="space-y-6">
-                {/* Foot Toggle */}
-                <div className="flex items-center justify-center">
-                  <div className="bg-gray-100 rounded-[12px] p-1 flex">
-                    <Button
-                      variant={selectedFoot === 'left' ? 'default' : 'ghost'}
-                      size="sm"
-                      onClick={() => setSelectedFoot('left')}
-                      className={`rounded-[8px] px-4 py-2 text-[14px] font-medium transition-all duration-200 ${
-                        selectedFoot === 'left' 
-                          ? 'bg-[#3B82F6] text-white shadow-md' 
-                          : 'text-[#64748B] hover:text-[#1E293B] hover:bg-white/50'
-                      }`}
-                    >
-                      <Footprints className="h-4 w-4 mr-2" />
-                      Left Foot
-                    </Button>
-                    <Button
-                      variant={selectedFoot === 'right' ? 'default' : 'ghost'}
-                      size="sm"
-                      onClick={() => setSelectedFoot('right')}
-                      className={`rounded-[8px] px-4 py-2 text-[14px] font-medium transition-all duration-200 ${
-                        selectedFoot === 'right' 
-                          ? 'bg-[#8B5CF6] text-white shadow-md' 
-                          : 'text-[#64748B] hover:text-[#1E293B] hover:bg-white/50'
-                      }`}
-                    >
-                      <Footprints className="h-4 w-4 mr-2" />
-                      Right Foot
-                    </Button>
+                {/* Foot Toggle - Only show if both feet are connected */}
+                {getConnectedInsoles().bothConnected ? (
+                  <div className="flex items-center justify-center">
+                    <div className="bg-gray-100 rounded-[12px] p-1 flex">
+                      <Button
+                        variant={selectedFoot === 'left' ? 'default' : 'ghost'}
+                        size="sm"
+                        onClick={() => setSelectedFoot('left')}
+                        className={`rounded-[8px] px-4 py-2 text-[14px] font-medium transition-all duration-200 ${
+                          selectedFoot === 'left' 
+                            ? 'bg-[#3B82F6] text-white shadow-md' 
+                            : 'text-[#64748B] hover:text-[#1E293B] hover:bg-white/50'
+                        }`}
+                      >
+                        <Footprints className="h-4 w-4 mr-2" />
+                        Left Foot
+                      </Button>
+                      <Button
+                        variant={selectedFoot === 'right' ? 'default' : 'ghost'}
+                        size="sm"
+                        onClick={() => setSelectedFoot('right')}
+                        className={`rounded-[8px] px-4 py-2 text-[14px] font-medium transition-all duration-200 ${
+                          selectedFoot === 'right' 
+                            ? 'bg-[#8B5CF6] text-white shadow-md' 
+                            : 'text-[#64748B] hover:text-[#1E293B] hover:bg-white/50'
+                        }`}
+                      >
+                        <Footprints className="h-4 w-4 mr-2" />
+                        Right Foot
+                      </Button>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="text-center">
+                    <h3 className="text-[16px] font-semibold text-[#1E293B] mb-1">
+                      {getConnectedInsoles().leftFoot ? 'Left Foot Analysis' : 'Right Foot Analysis'}
+                    </h3>
+                    <p className="text-[12px] text-[#64748B]">
+                      {getConnectedInsoles().leftFoot 
+                        ? 'Monitoring left foot with Neem Insole 2' 
+                        : 'Monitoring right foot with Neem Insole 1'
+                      }
+                    </p>
+                  </div>
+                )}
 
                 {/* Enhanced Chart */}
                 <div className="bg-white/50 rounded-[20px] p-6 border border-white/50 shadow-inner">
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h3 className="text-[16px] font-semibold text-[#1E293B] mb-1">
-                        {selectedFoot === 'left' ? 'Left' : 'Right'} Foot Risk Trend
+                        {getConnectedInsoles().bothConnected 
+                          ? (selectedFoot === 'left' ? 'Left' : 'Right') + ' Foot Risk Trend'
+                          : getConnectedInsoles().leftFoot 
+                            ? 'Left Foot Risk Trend'
+                            : 'Right Foot Risk Trend'
+                        }
                       </h3>
                       <p className="text-[12px] text-[#64748B]">
-                        Current: {selectedFoot === 'left' 
-                          ? ulcerRiskData[ulcerRiskData.length - 1]?.leftFoot 
-                          : ulcerRiskData[ulcerRiskData.length - 1]?.rightFoot
+                        Current: {getConnectedInsoles().bothConnected 
+                          ? (selectedFoot === 'left' 
+                              ? ulcerRiskData[ulcerRiskData.length - 1]?.leftFoot 
+                              : ulcerRiskData[ulcerRiskData.length - 1]?.rightFoot)
+                          : getConnectedInsoles().leftFoot
+                            ? ulcerRiskData[ulcerRiskData.length - 1]?.leftFoot
+                            : ulcerRiskData[ulcerRiskData.length - 1]?.rightFoot
                         }% risk level
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className={`w-3 h-3 rounded-full ${selectedFoot === 'left' ? 'bg-[#3B82F6]' : 'bg-[#8B5CF6]'}`}></div>
+                      <div className={`w-3 h-3 rounded-full ${
+                        getConnectedInsoles().bothConnected 
+                          ? (selectedFoot === 'left' ? 'bg-[#3B82F6]' : 'bg-[#8B5CF6]')
+                          : getConnectedInsoles().leftFoot 
+                            ? 'bg-[#3B82F6]' 
+                            : 'bg-[#8B5CF6]'
+                      }`}></div>
                       <span className="text-[12px] font-medium text-[#64748B]">Risk Percentage</span>
                     </div>
                   </div>
@@ -715,9 +887,23 @@ export function RealTimeMonitor() {
                   <div className="h-[300px]">
                     <ChartContainer
                       config={{
-                        [selectedFoot + 'Foot']: {
-                          label: `${selectedFoot === 'left' ? 'Left' : 'Right'} Foot Risk (%)`,
-                          color: selectedFoot === 'left' ? '#3B82F6' : '#8B5CF6',
+                        [getConnectedInsoles().bothConnected 
+                          ? selectedFoot + 'Foot'
+                          : getConnectedInsoles().leftFoot 
+                            ? 'leftFoot'
+                            : 'rightFoot'
+                        ]: {
+                          label: `${getConnectedInsoles().bothConnected 
+                            ? (selectedFoot === 'left' ? 'Left' : 'Right')
+                            : getConnectedInsoles().leftFoot 
+                              ? 'Left'
+                              : 'Right'
+                          } Foot Risk (%)`,
+                          color: getConnectedInsoles().bothConnected 
+                            ? (selectedFoot === 'left' ? '#3B82F6' : '#8B5CF6')
+                            : getConnectedInsoles().leftFoot 
+                              ? '#3B82F6' 
+                              : '#8B5CF6',
                         },
                       }}
                     >
@@ -735,12 +921,22 @@ export function RealTimeMonitor() {
                           <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
                             <stop 
                               offset="5%" 
-                              stopColor={selectedFoot === 'left' ? '#3B82F6' : '#8B5CF6'} 
+                              stopColor={getConnectedInsoles().bothConnected 
+                                ? (selectedFoot === 'left' ? '#3B82F6' : '#8B5CF6')
+                                : getConnectedInsoles().leftFoot 
+                                  ? '#3B82F6' 
+                                  : '#8B5CF6'
+                              } 
                               stopOpacity={0.3}
                             />
                             <stop 
                               offset="95%" 
-                              stopColor={selectedFoot === 'left' ? '#3B82F6' : '#8B5CF6'} 
+                              stopColor={getConnectedInsoles().bothConnected 
+                                ? (selectedFoot === 'left' ? '#3B82F6' : '#8B5CF6')
+                                : getConnectedInsoles().leftFoot 
+                                  ? '#3B82F6' 
+                                  : '#8B5CF6'
+                              } 
                               stopOpacity={0.05}
                             />
                           </linearGradient>
@@ -778,20 +974,38 @@ export function RealTimeMonitor() {
                           }}
                         />
                         <Area
-                          dataKey={selectedFoot + 'Foot'}
+                          dataKey={getConnectedInsoles().bothConnected 
+                            ? selectedFoot + 'Foot'
+                            : getConnectedInsoles().leftFoot 
+                              ? 'leftFoot'
+                              : 'rightFoot'
+                          }
                           type="monotone"
-                          stroke={selectedFoot === 'left' ? '#3B82F6' : '#8B5CF6'}
+                          stroke={getConnectedInsoles().bothConnected 
+                            ? (selectedFoot === 'left' ? '#3B82F6' : '#8B5CF6')
+                            : getConnectedInsoles().leftFoot 
+                              ? '#3B82F6' 
+                              : '#8B5CF6'
+                          }
                           strokeWidth={3}
                           fill="url(#colorGradient)"
                           dot={{ 
-                            fill: selectedFoot === 'left' ? '#3B82F6' : '#8B5CF6', 
+                            fill: getConnectedInsoles().bothConnected 
+                              ? (selectedFoot === 'left' ? '#3B82F6' : '#8B5CF6')
+                              : getConnectedInsoles().leftFoot 
+                                ? '#3B82F6' 
+                                : '#8B5CF6', 
                             strokeWidth: 2, 
                             stroke: '#fff',
                             r: 4 
                           }}
                           activeDot={{ 
                             r: 6, 
-                            stroke: selectedFoot === 'left' ? '#3B82F6' : '#8B5CF6',
+                            stroke: getConnectedInsoles().bothConnected 
+                              ? (selectedFoot === 'left' ? '#3B82F6' : '#8B5CF6')
+                              : getConnectedInsoles().leftFoot 
+                                ? '#3B82F6' 
+                                : '#8B5CF6',
                             strokeWidth: 2,
                             fill: '#fff'
                           }}
