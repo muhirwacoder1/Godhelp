@@ -30,18 +30,18 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <LanguageProvider>
             <div className="flex h-screen bg-gradient-to-br from-[#F8FAFC] via-[#FFFFFF] to-[#F0F4F8]">
-              {/* Desktop Sidebar - Hidden on mobile */}
-              <div className="hidden lg:block">
+              {/* Desktop Sidebar - Hidden to show mobile interface on all screens */}
+              <div className="hidden">
                 <Sidebar />
               </div>
               
               {/* Main Content Area */}
               <div className="flex-1 flex flex-col overflow-hidden bg-transparent">
-                {/* Mobile Header - Only visible on mobile */}
+                {/* Mobile Interface - Now visible on all screens */}
                 <MobileNav />
                 
                 {/* Page Content */}
-                <div className="flex-1 overflow-auto pb-24 lg:pb-0">
+                <div className="flex-1 overflow-auto pb-24">
                   {children}
                 </div>
               </div>

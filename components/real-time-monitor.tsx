@@ -437,9 +437,9 @@ export function RealTimeMonitor() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#F8FAFC] via-[#FFFFFF] to-[#F0F4F8] p-4 lg:p-6">
-      {/* Header Section - Hidden on mobile since we have greeting in mobile nav */}
-      <div className="mb-6 hidden lg:block">
+    <div className="min-h-screen bg-gradient-to-br from-[#F8FAFC] via-[#FFFFFF] to-[#F0F4F8] p-4">
+      {/* Header Section - Hidden since we have greeting in mobile nav */}
+      <div className="mb-6 hidden">
         <h1 className="text-[28px] leading-[34px] font-bold text-[#1E293B] tracking-[-0.5px] mb-2">
           Health Dashboard
         </h1>
@@ -448,8 +448,8 @@ export function RealTimeMonitor() {
         </p>
       </div>
 
-      {/* Mobile Header - Only visible on mobile */}
-      <div className="mb-6 lg:hidden">
+      {/* Mobile Header - Now visible on all screens */}
+      <div className="mb-6">
         <h1 className="text-[22px] leading-[28px] font-semibold text-[#1E293B] tracking-[-0.3px] mb-2">
           Your Health Today
         </h1>

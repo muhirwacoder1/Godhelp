@@ -390,8 +390,8 @@ export function MobileNav() {
 
   return (
     <>
-      {/* Top Header with Profile and Icons - Mobile Only */}
-      <div className="lg:hidden bg-gradient-to-r from-[#F8FAFC] via-white to-[#F8FAFC] px-6 py-4 shadow-[0_2px_20px_rgba(0,0,0,0.08)]">
+      {/* Top Header with Profile and Icons - All Screens */}
+      <div className="bg-gradient-to-r from-[#F8FAFC] via-white to-[#F8FAFC] px-6 py-4 shadow-[0_2px_20px_rgba(0,0,0,0.08)]">
         <div className="flex items-center justify-between mb-3">
           {/* Left: Profile Photo - Clickable */}
           <button onClick={handleProfileClick} className="relative">
@@ -446,8 +446,8 @@ export function MobileNav() {
         </div>
       </div>
 
-      {/* Bottom Navigation Bar - Compact with Pill Expansion */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 pb-safe">
+      {/* Bottom Navigation Bar - Compact with Pill Expansion - All Screens */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 pb-safe">
         {/* Navigation Container - Reduced height, full width */}
         <nav className="bg-[#2563eb] backdrop-blur-[8px] px-4 py-3 shadow-[0_-2px_10px_rgba(0,0,0,0.1)]">
           {/* Navigation Items Container */}
