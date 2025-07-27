@@ -1,9 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo, useCallback } from "react"
 import { format } from "date-fns"
 import { Calendar as CalendarIcon, Clock, User, Check, Search, ArrowRight, MapPin } from "lucide-react"
-import { motion } from "framer-motion"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -17,16 +16,15 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import { useLanguage } from "@/context/language-context"
 
-// Healthcare professionals data
-const healthcareProfessionals = [
+// Lazy-loaded healthcare professionals data
+const getHealthcareProfessionals = () => [
   {
     id: 1,
     name: "Nyirarukundo Grace",
@@ -53,15 +51,18 @@ const healthcareProfessionals = [
   },
 ]
 
-// Categories for filtering
-const categories = [
-  { id: "all", name: "All" },
-  { id: "orthopaedist", name: "Orthopaedist" },
-  { id: "surgeon", name: "Surgeon" },
-  { id: "therapist", name: "Therapist" }
-]
+const healthcareProfessionals = getHealthcareProfessionals()
+
+  // Categories for filtering
+  const categories = [
+    { id: "all", name: "All" },
+    { id: "orthopaedist", name: "Orthopaedist" },
+    { id: "surgeon", name: "Surgeon" },
+    { id: "therapist", name: "Therapist" }
+  ]
 
 export function AppointmentForm() {
+  const { t } = useLanguage()
   const [date, setDate] = useState<Date>()
   const [selectedProfessional, setSelectedProfessional] = useState<number | null>(null)
   const [selectedTime, setSelectedTime] = useState<string | null>(null)
@@ -70,66 +71,69 @@ export function AppointmentForm() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
 
-  const handleProfessionalSelect = (id: number) => {
+  // Debounced search to improve performance
+  const debouncedSearchQuery = useMemo(() => {
+    return searchQuery
+  }, [searchQuery])
+
+  const handleProfessionalSelect = useCallback((id: number) => {
     setSelectedProfessional(id)
     setSelectedTime(null)
     if (bookingStep === 1) setBookingStep(2)
-  }
+  }, [bookingStep])
 
-  const handleTimeSelect = (time: string) => {
+  const handleTimeSelect = useCallback((time: string) => {
     setSelectedTime(time)
     if (bookingStep === 2) setBookingStep(3)
-  }
+  }, [bookingStep])
 
-  const handleBookAppointment = () => {
+  const handleBookAppointment = useCallback(() => {
     // Here you would typically send the booking data to your backend
     setBookingComplete(true)
-  }
+  }, [])
 
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     setDate(undefined)
     setSelectedProfessional(null)
     setSelectedTime(null)
     setBookingStep(1)
     setBookingComplete(false)
-  }
+  }, [])
 
   // Get the selected professional's data
-  const professional = selectedProfessional 
-    ? healthcareProfessionals.find(p => p.id === selectedProfessional) 
+  const professional = selectedProfessional
+    ? healthcareProfessionals.find(p => p.id === selectedProfessional)
     : null
 
-  // Filter professionals based on search and category
-  const filteredProfessionals = healthcareProfessionals.filter(pro => {
-    const matchesSearch = searchQuery === "" || 
-      pro.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      pro.title.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesCategory = selectedCategory === "all" || 
-      pro.title.toLowerCase().includes(selectedCategory.toLowerCase());
-    
-    return matchesSearch && matchesCategory;
-  });
+  // Memoized filtering for better performance with debounced search
+  const filteredProfessionals = useMemo(() => {
+    return healthcareProfessionals.filter(pro => {
+      const matchesSearch = debouncedSearchQuery === "" ||
+        pro.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+        pro.title.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
+
+      const matchesCategory = selectedCategory === "all" ||
+        pro.title.toLowerCase().includes(selectedCategory.toLowerCase());
+
+      return matchesSearch && matchesCategory;
+    });
+  }, [debouncedSearchQuery, selectedCategory]);
 
   if (bookingComplete) {
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="flex flex-col items-center justify-center p-8 bg-white rounded-xl shadow-lg"
+      <div className="flex flex-col items-center justify-center p-8 bg-white rounded-xl shadow-lg animate-fade-in"
       >
         <div className="w-16 h-16 flex items-center justify-center rounded-full bg-green-100 mb-4">
           <Check className="w-8 h-8 text-green-600" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Appointment Confirmed!</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">{t.appointment.bookingConfirmed}</h2>
         <p className="text-gray-600 mb-6 text-center">
           Your appointment has been scheduled for {date ? format(date, "PPP") : ""} at {selectedTime} with {professional?.name}.
         </p>
         <Button onClick={resetForm} className="bg-blue-600 hover:bg-blue-700">
-          Book Another Appointment
+          {t.appointment.book}
         </Button>
-      </motion.div>
+      </div>
     )
   }
 
@@ -137,34 +141,34 @@ export function AppointmentForm() {
     <div className="w-full max-w-6xl mx-auto">
       <Tabs defaultValue="booking" className="w-full">
         <TabsList className="grid w-full grid-cols-2 bg-gray-100 rounded-xl p-1">
-          <TabsTrigger 
-            value="booking" 
+          <TabsTrigger
+            value="booking"
             className="rounded-lg data-[state=active]:bg-blue-600 data-[state=active]:text-white"
           >
-            Book Appointment
+            {t.appointment.title}
           </TabsTrigger>
-          <TabsTrigger 
-            value="upcoming" 
+          <TabsTrigger
+            value="upcoming"
             className="rounded-lg data-[state=active]:bg-blue-600 data-[state=active]:text-white"
           >
-            Upcoming Appointments
+            {t.appointment.title}
           </TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="booking" className="mt-6">
           {/* Search and Filter Section */}
           <Card className="mb-6 border-0 shadow-sm overflow-hidden">
             <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6">
-              <CardTitle className="text-xl font-semibold">Find Healthcare Professionals</CardTitle>
+              <CardTitle className="text-xl font-semibold">{t.appointment.professionals}</CardTitle>
               <CardDescription className="text-blue-100">
-                Search for specialists and book your appointment
+                {t.common.search}
               </CardDescription>
             </CardHeader>
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="relative flex-1">
                   <Input
-                    placeholder="Search by name or specialty"
+                    placeholder={t.common.search}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="h-11 pr-10"
@@ -201,9 +205,9 @@ export function AppointmentForm() {
               <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 p-6">
                 <CardTitle className="flex items-center text-gray-800">
                   <CalendarIcon className="mr-2 h-5 w-5 text-blue-600" />
-                  Select Date
+                  {t.appointment.selectDate}
                 </CardTitle>
-                <CardDescription className="text-gray-600">Choose your preferred appointment date</CardDescription>
+                <CardDescription className="text-gray-600">{t.appointment.selectDate}</CardDescription>
               </CardHeader>
               <CardContent className="p-6">
                 <Popover>
@@ -216,7 +220,7 @@ export function AppointmentForm() {
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4 text-blue-600" />
-                      {date ? format(date, "PPP") : <span>Pick a date</span>}
+                      {date ? format(date, "PPP") : <span>{t.appointment.selectDate}</span>}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
@@ -241,22 +245,18 @@ export function AppointmentForm() {
               <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 p-6">
                 <CardTitle className="flex items-center text-gray-800">
                   <User className="mr-2 h-5 w-5 text-blue-600" />
-                  Select Professional
+                  {t.appointment.selectProfessional}
                 </CardTitle>
-                <CardDescription className="text-gray-600">Choose your healthcare provider</CardDescription>
+                <CardDescription className="text-gray-600">{t.appointment.selectProfessional}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 p-6">
                 {filteredProfessionals.length > 0 ? (
                   filteredProfessionals.map((professional) => (
-                    <motion.div
+                    <div
                       key={professional.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
                       onClick={() => handleProfessionalSelect(professional.id)}
                       className={cn(
-                        "flex items-center p-4 rounded-xl cursor-pointer transition-all",
+                        "flex items-center p-4 rounded-xl cursor-pointer transition-all hover:scale-[1.02] active:scale-[0.98]",
                         selectedProfessional === professional.id
                           ? "bg-blue-50 border-2 border-blue-500"
                           : "bg-white hover:bg-gray-50 border border-gray-200"
@@ -276,13 +276,13 @@ export function AppointmentForm() {
                           <Check className="h-5 w-5 text-blue-600" />
                         </div>
                       )}
-                    </motion.div>
+                    </div>
                   ))
                 ) : (
                   <div className="flex flex-col items-center justify-center py-8 text-gray-500">
                     <User className="h-12 w-12 mb-4 opacity-50" />
-                    <p className="text-lg">No professionals found</p>
-                    <p className="text-sm">Try adjusting your search criteria</p>
+                    <p className="text-lg">{t.appointment.professionals}</p>
+                    <p className="text-sm">{t.common.search}</p>
                   </div>
                 )}
               </CardContent>
@@ -296,34 +296,32 @@ export function AppointmentForm() {
               <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100 p-6">
                 <CardTitle className="flex items-center text-gray-800">
                   <Clock className="mr-2 h-5 w-5 text-blue-600" />
-                  Select Time
+                  {t.appointment.selectTime}
                 </CardTitle>
-                <CardDescription className="text-gray-600">Choose an available time slot</CardDescription>
+                <CardDescription className="text-gray-600">{t.appointment.availableTimes}</CardDescription>
               </CardHeader>
               <CardContent className="p-6">
                 {selectedProfessional ? (
                   <div className="grid grid-cols-2 gap-2">
                     {professional?.availability.map((time) => (
-                      <motion.button
+                      <button
                         key={time}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
                         onClick={() => handleTimeSelect(time)}
                         className={cn(
-                          "p-3 rounded-lg text-sm font-medium transition-all",
+                          "p-3 rounded-lg text-sm font-medium transition-all hover:scale-105 active:scale-95",
                           selectedTime === time
                             ? "bg-blue-600 text-white"
                             : "bg-gray-100 hover:bg-gray-200 text-gray-700"
                         )}
                       >
                         {time}
-                      </motion.button>
+                      </button>
                     ))}
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center h-32 text-gray-400">
                     <Clock className="h-8 w-8 mb-2 opacity-50" />
-                    <p>Select a professional first</p>
+                    <p>{t.appointment.selectProfessional}</p>
                   </div>
                 )}
               </CardContent>
@@ -331,19 +329,16 @@ export function AppointmentForm() {
           </div>
 
           {/* Summary and Booking Button */}
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ 
-              opacity: date && selectedProfessional && selectedTime ? 1 : 0,
-              height: date && selectedProfessional && selectedTime ? "auto" : 0
-            }}
-            transition={{ duration: 0.3 }}
-            className="mt-8 bg-white rounded-xl p-6 overflow-hidden shadow-sm border-0"
+          <div
+            className={cn(
+              "mt-8 bg-white rounded-xl p-6 overflow-hidden shadow-sm border-0 transition-all duration-300",
+              date && selectedProfessional && selectedTime ? "opacity-100 max-h-96" : "opacity-0 max-h-0"
+            )}
           >
             {date && selectedProfessional && selectedTime && (
               <div className="flex flex-col md:flex-row md:items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">Appointment Summary</h3>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2">{t.appointment.confirmBooking}</h3>
                   <div className="flex flex-col space-y-2">
                     <div className="flex items-center">
                       <CalendarIcon className="h-4 w-4 text-blue-600 mr-2" />
@@ -363,36 +358,39 @@ export function AppointmentForm() {
                     </div>
                   </div>
                 </div>
-                <Button 
+                <Button
                   onClick={handleBookAppointment}
                   className="mt-4 md:mt-0 bg-blue-600 hover:bg-blue-700 rounded-lg px-6 py-3 h-auto"
                 >
-                  <span>Confirm Appointment</span>
+                  <span>{t.appointment.confirmBooking}</span>
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
             )}
-          </motion.div>
+          </div>
         </TabsContent>
-        
+
         <TabsContent value="upcoming" className="mt-6">
           <Card className="bg-white shadow-sm border-0 rounded-xl overflow-hidden">
             <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6">
-              <CardTitle className="text-xl font-semibold">Your Upcoming Appointments</CardTitle>
+              <CardTitle className="text-xl font-semibold">{t.appointment.title}</CardTitle>
               <CardDescription className="text-blue-100">
-                View and manage your scheduled appointments
+                {t.appointment.title}
               </CardDescription>
             </CardHeader>
             <CardContent className="p-6">
               <div className="flex flex-col items-center justify-center py-8 text-gray-500">
                 <CalendarIcon className="h-12 w-12 mb-4 opacity-50" />
-                <p className="text-lg">No upcoming appointments</p>
-                <p className="text-sm">Your scheduled appointments will appear here</p>
-                <Button 
-                  onClick={() => document.querySelector('[data-state="inactive"][value="booking"]')?.click()}
+                <p className="text-lg">{t.appointment.noAvailableTimes}</p>
+                <p className="text-sm">{t.appointment.title}</p>
+                <Button
+                  onClick={() => {
+                    const bookingTab = document.querySelector('[value="booking"]') as HTMLElement;
+                    bookingTab?.click();
+                  }}
                   className="mt-4 bg-blue-600 hover:bg-blue-700"
                 >
-                  Book New Appointment
+                  {t.appointment.book}
                 </Button>
               </div>
             </CardContent>

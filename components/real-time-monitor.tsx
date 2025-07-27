@@ -21,6 +21,7 @@ import {
   Ruler,
   Scale
 } from "lucide-react"
+import { useLanguage } from "@/context/language-context"
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import {
   Card,
@@ -79,6 +80,7 @@ interface UlcerRiskData {
 }
 
 export function RealTimeMonitor() {
+  const { t } = useLanguage()
   const [isActive, setIsActive] = useState(false)
   const [showWiFiPopup, setShowWiFiPopup] = useState(false)
   const [showPasswordPopup, setShowPasswordPopup] = useState(false)
@@ -143,9 +145,9 @@ export function RealTimeMonitor() {
     heartRate: 0,
     temperature: 0,
     timestamp: new Date().toISOString(),
-    heelStatus: "No data",
-    middleStatus: "No data",
-    toeStatus: "No data"
+    heelStatus: t.monitor.noData,
+    middleStatus: t.monitor.noData,
+    toeStatus: t.monitor.noData
   })
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -224,9 +226,9 @@ export function RealTimeMonitor() {
           heartRate: 0,
           temperature: 0,
           timestamp: new Date().toISOString(),
-          heelStatus: "No data",
-          middleStatus: "No data",
-          toeStatus: "No data"
+          heelStatus: t.monitor.noData,
+          middleStatus: t.monitor.noData,
+          toeStatus: t.monitor.noData
         }
       }
 
@@ -245,11 +247,11 @@ export function RealTimeMonitor() {
 
       // Simple status logic – you can tweak thresholds later
       const statusFor = (p: number) => {
-        if (p === 0) return "No data"
-        if (p < 500) return "Low"
-        if (p < 1000) return "Normal"
-        if (p < 1500) return "Elevated"
-        return "High"
+        if (p === 0) return t.monitor.noData
+        if (p < 500) return t.monitor.low
+        if (p < 1000) return t.monitor.normal
+        if (p < 1500) return t.monitor.elevated
+        return t.monitor.high
       }
 
       return {
@@ -438,15 +440,7 @@ export function RealTimeMonitor() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#F8FAFC] via-[#FFFFFF] to-[#F0F4F8] p-4">
-      {/* Header Section - Hidden since we have greeting in mobile nav */}
-      <div className="mb-6 hidden">
-        <h1 className="text-[28px] leading-[34px] font-bold text-[#1E293B] tracking-[-0.5px] mb-2">
-          Health Dashboard
-        </h1>
-        <p className="text-[14px] leading-[20px] text-[#64748B] font-medium tracking-[0.1px]">
-          Real-time monitoring of your foot health and vitals
-        </p>
-      </div>
+
 
       {/* Mobile Header - Now visible on all screens */}
       <div className="mb-6">
@@ -474,7 +468,7 @@ export function RealTimeMonitor() {
             <div className="w-12 h-12 bg-[#4A90E2] rounded-[12px] flex items-center justify-center">
               <img
                 src="/icons/signal-stream.svg"
-                alt="Signal Stream"
+                alt={t.monitor.signalStream}
                 className="h-6 w-6 text-white filter brightness-0 invert"
               />
             </div>
@@ -483,7 +477,7 @@ export function RealTimeMonitor() {
                 Status
               </h3>
               <p className="text-[12px] leading-[16px] text-[#64748B] font-medium tracking-[0.1px]">
-                {isActive && isInsoleConnected() ? "Active" : "Disconnected"}
+                {isActive && isInsoleConnected() ? t.monitor.active : t.monitor.disconnected}
               </p>
             </div>
           </div>
@@ -580,7 +574,7 @@ export function RealTimeMonitor() {
           <div className="bg-white/80 backdrop-blur-sm rounded-[20px] p-6 shadow-[0_8px_32px_rgba(0,0,0,0.08)] border border-white/20">
             <div className="text-center mb-4">
               <h3 className="text-[18px] leading-[24px] font-semibold text-[#1E293B] tracking-[-0.2px] mb-1">
-                Heel
+                {t.monitor.heel}
               </h3>
               <div className="flex items-baseline justify-center gap-1">
                 <span className="text-[24px] leading-[28px] font-semibold text-[#4A90E2]">
@@ -602,7 +596,7 @@ export function RealTimeMonitor() {
                 data.heelStatus === 'High' ? 'bg-[#EF4444] bg-opacity-10 text-[#EF4444]' :
                   'bg-[#F59E0B] bg-opacity-10 text-[#F59E0B]'
                 }`}>
-                {data.heelStatus || "No data"}
+                {data.heelStatus || t.monitor.noData}
               </span>
             </div>
           </div>
@@ -611,7 +605,7 @@ export function RealTimeMonitor() {
           <div className="bg-white/80 backdrop-blur-sm rounded-[20px] p-6 shadow-[0_8px_32px_rgba(0,0,0,0.08)] border border-white/20">
             <div className="text-center mb-4">
               <h3 className="text-[18px] leading-[24px] font-semibold text-[#1E293B] tracking-[-0.2px] mb-1">
-                Middle
+                {t.monitor.middle}
               </h3>
               <div className="flex items-baseline justify-center gap-1">
                 <span className="text-[24px] leading-[28px] font-semibold text-[#F59E0B]">
@@ -633,7 +627,7 @@ export function RealTimeMonitor() {
                 data.middleStatus === 'High' ? 'bg-[#EF4444] bg-opacity-10 text-[#EF4444]' :
                   'bg-[#F59E0B] bg-opacity-10 text-[#F59E0B]'
                 }`}>
-                {data.middleStatus || "No data"}
+                {data.middleStatus || t.monitor.noData}
               </span>
             </div>
           </div>
@@ -642,7 +636,7 @@ export function RealTimeMonitor() {
           <div className="bg-white/80 backdrop-blur-sm rounded-[20px] p-6 shadow-[0_8_32px_rgba(0,0,0,0.08)] border border-white/20">
             <div className="text-center mb-4">
               <h3 className="text-[18px] leading-[24px] font-semibold text-[#1E293B] tracking-[-0.2px] mb-1">
-                Toe
+                {t.monitor.toe}
               </h3>
               <div className="flex items-baseline justify-center gap-1">
                 <span className="text-[24px] leading-[28px] font-semibold text-[#10B981]">
@@ -664,7 +658,7 @@ export function RealTimeMonitor() {
                 data.toeStatus === 'High' ? 'bg-[#EF4444] bg-opacity-10 text-[#EF4444]' :
                   'bg-[#F59E0B] bg-opacity-10 text-[#F59E0B]'
                 }`}>
-                {data.toeStatus || "No data"}
+                {data.toeStatus || t.monitor.noData}
               </span>
             </div>
           </div>
@@ -686,8 +680,8 @@ export function RealTimeMonitor() {
                   </CardTitle>
                   <CardDescription className="text-[14px] text-[#64748B] font-medium">
                     {isInsoleConnected() && ulcerRiskData.length > 0 
-                      ? `Real-time monitoring • ${ulcerRiskData.length} data points`
-                      : "Connect an insole to start predictive analysis"
+                      ? `${t.monitor.realTimeMonitoring} • ${ulcerRiskData.length} ${t.monitor.dataPoints}`
+                      : t.monitor.connectInsole
                     }
                   </CardDescription>
                 </div>
@@ -701,7 +695,7 @@ export function RealTimeMonitor() {
                   className="flex items-center gap-2 bg-gradient-to-r from-[#667EEA] to-[#764BA2] hover:from-[#5A67D8] hover:to-[#6B46C1] text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200"
                 >
                   {showAnalytics ? <Eye className="h-4 w-4" /> : <BarChart3 className="h-4 w-4" />}
-                  {showAnalytics ? "Hide Charts" : "View Analytics"}
+                  {showAnalytics ? t.monitor.hideCharts : t.monitor.viewAnalytics}
                   <ChevronRight className={`h-4 w-4 transition-transform duration-200 ${showAnalytics ? 'rotate-90' : ''}`} />
                 </Button>
               )}
@@ -750,7 +744,7 @@ export function RealTimeMonitor() {
                         <div className="w-8 h-8 bg-[#3B82F6] rounded-[8px] flex items-center justify-center">
                           <Footprints className="h-4 w-4 text-white" />
                         </div>
-                        <span className="text-[12px] font-medium text-[#3B82F6] uppercase tracking-wide">Left Foot</span>
+                        <span className="text-[12px] font-medium text-[#3B82F6] uppercase tracking-wide">{t.monitor.leftFoot}</span>
                       </div>
                       <p className="text-[24px] font-bold text-[#1E293B] mb-1">
                         {ulcerRiskData[ulcerRiskData.length - 1]?.leftFoot || 0}%
@@ -765,7 +759,7 @@ export function RealTimeMonitor() {
                         <div className="w-8 h-8 bg-[#8B5CF6] rounded-[8px] flex items-center justify-center">
                           <Footprints className="h-4 w-4 text-white" />
                         </div>
-                        <span className="text-[12px] font-medium text-[#8B5CF6] uppercase tracking-wide">Right Foot</span>
+                        <span className="text-[12px] font-medium text-[#8B5CF6] uppercase tracking-wide">{t.monitor.rightFoot}</span>
                       </div>
                       <p className="text-[24px] font-bold text-[#1E293B] mb-1">
                         {ulcerRiskData[ulcerRiskData.length - 1]?.rightFoot || 0}%
@@ -818,7 +812,7 @@ export function RealTimeMonitor() {
                         }`}
                       >
                         <Footprints className="h-4 w-4 mr-2" />
-                        Left Foot
+                        {t.monitor.leftFoot}
                       </Button>
                       <Button
                         variant={selectedFoot === 'right' ? 'default' : 'ghost'}
@@ -831,7 +825,7 @@ export function RealTimeMonitor() {
                         }`}
                       >
                         <Footprints className="h-4 w-4 mr-2" />
-                        Right Foot
+                        {t.monitor.rightFoot}
                       </Button>
                     </div>
                   </div>
@@ -1049,7 +1043,7 @@ export function RealTimeMonitor() {
                     <div className="w-10 h-10 bg-[#4A90E2]/10 rounded-[10px] flex items-center justify-center">
                       <img
                         src="/icons/signal-stream.svg"
-                        alt="Signal"
+                        alt={t.monitor.signal}
                         className="h-5 w-5 opacity-70"
                       />
                     </div>
@@ -1127,7 +1121,7 @@ export function RealTimeMonitor() {
                 type="password"
                 value={passwordInput}
                 onChange={(e) => setPasswordInput(e.target.value)}
-                placeholder="Enter device password"
+                placeholder={t.monitor.enterPassword}
                 className="w-full px-4 py-3 bg-white/60 backdrop-blur-sm border border-white/30 rounded-[16px] text-[16px] text-[#1E293B] placeholder-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#4A90E2] focus:border-transparent"
                 onKeyPress={(e) => e.key === 'Enter' && handlePasswordSubmit()}
               />

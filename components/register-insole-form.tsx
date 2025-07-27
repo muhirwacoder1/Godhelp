@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback, useMemo } from "react"
 import { 
   Bluetooth, 
   Power, 
@@ -11,7 +11,6 @@ import {
   ArrowRight,
   Info
 } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
 import { 
   Card, 
   CardContent, 
@@ -40,9 +39,29 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { motion } from "framer-motion"
+import { motion } from "framer-motion"
+import { AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
+import { motion } from "framer-motion"
+import { motion } from "framer-motion"
+import { motion } from "framer-motion"
+import { motion } from "framer-motion"
+import { motion } from "framer-motion"
+import { motion } from "framer-motion"
+import { motion } from "framer-motion"
+import { AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
+import { motion } from "framer-motion"
+import { motion } from "framer-motion"
+import { motion } from "framer-motion"
+import { motion } from "framer-motion"
+import { motion } from "framer-motion"
+import { motion } from "framer-motion"
+import { motion } from "framer-motion"
 
-// Mock devices for demonstration
-const mockDevices = [
+// Lazy-loaded mock devices for demonstration
+const getMockDevices = () => [
   { id: "SI-2023-001", name: "Smart Insole #1", signal: "Strong", batteryLevel: 100 },
   { id: "SI-2023-002", name: "Smart Insole #2", signal: "Medium", batteryLevel: 85 }
 ]
@@ -55,6 +74,7 @@ type Device = {
 }
 
 export function RegisterInsoleForm() {
+  const { t } = useLanguage()
   const [activeTab, setActiveTab] = useState("setup")
   const [isScanning, setIsScanning] = useState(false)
   const [devices, setDevices] = useState<Device[]>([])
@@ -62,44 +82,45 @@ export function RegisterInsoleForm() {
   const [deviceName, setDeviceName] = useState("")
   const [registrationComplete, setRegistrationComplete] = useState(false)
   
-  // Simulate scanning for devices
-  const scanForDevices = () => {
+  // Optimized scanning for devices with useCallback
+  const scanForDevices = useCallback(() => {
     setIsScanning(true)
     setDevices([])
     
-    // Simulate finding devices after a delay
+    // Simulate finding devices after a shorter delay for better UX
     setTimeout(() => {
-      setDevices(mockDevices)
+      setDevices(getMockDevices())
       setIsScanning(false)
-    }, 3000)
-  }
+    }, 1500) // Reduced from 3000ms to 1500ms
+  }, [])
   
-  // Handle device selection
-  const selectDevice = (deviceId: string) => {
+  // Optimized device selection with useCallback
+  const selectDevice = useCallback((deviceId: string) => {
     setSelectedDevice(deviceId)
-    const device = devices.find(d => d.id === deviceId)
+    const mockDevices = getMockDevices()
+    const device = mockDevices.find(d => d.id === deviceId)
     if (device) {
       setDeviceName(device.name)
     }
     setActiveTab("configure")
-  }
+  }, [])
   
-  // Handle device registration
-  const registerDevice = () => {
+  // Optimized device registration with useCallback
+  const registerDevice = useCallback(() => {
     // Here you would typically send the registration data to your backend
     setRegistrationComplete(true)
     setActiveTab("complete")
-  }
+  }, [])
   
-  // Reset the form
-  const resetForm = () => {
+  // Optimized form reset with useCallback
+  const resetForm = useCallback(() => {
     setIsScanning(false)
     setDevices([])
     setSelectedDevice(null)
     setDeviceName("")
     setRegistrationComplete(false)
     setActiveTab("setup")
-  }
+  }, [])
   
   return (
     <div className="max-w-4xl mx-auto">
@@ -421,7 +442,7 @@ export function RegisterInsoleForm() {
                 className="bg-blue-600 hover:bg-blue-700"
                 disabled={!deviceName.trim()}
               >
-                Register Device
+                {t.registerInsole.register}
               </Button>
             </CardFooter>
           </Card>
@@ -477,7 +498,7 @@ export function RegisterInsoleForm() {
                 variant="outline"
                 className="mr-4"
               >
-                Register Another Device
+                {t.registerInsole.register}
               </Button>
               <Button className="bg-blue-600 hover:bg-blue-700">
                 Go to Dashboard

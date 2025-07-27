@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import { useLanguage } from "@/context/language-context"
 import { 
   Calculator, 
   Apple, 
@@ -27,36 +28,11 @@ import {
   AlertTriangle
 } from "lucide-react"
 
-// Navigation items configuration - Simplified with pill expansion
-const navItems = [
-  {
-    href: "/",
-    icon: "/icons/house-chimney-heart.svg",
-    label: "Home",
-    id: "home"
-  },
-  {
-    href: "/appointments",
-    icon: "/icons/clock.svg",
-    label: "Appointments",
-    id: "appointments"
-  },
-  {
-    href: "/register-insole",
-    icon: "/icons/add1.svg",
-    label: "Add Device",
-    id: "register"
-  },
-  {
-    href: "/more",
-    icon: "/icons/more.png",
-    label: "More",
-    id: "more"
-  }
-]
+
 
 export function MobileNav() {
   const pathname = usePathname()
+  const { t, currentLanguage, setLanguage, languages } = useLanguage()
   const [showNotifications, setShowNotifications] = useState(false)
   const [hasNotifications] = useState(false) // Set to true when there are notifications
   const [user, setUser] = useState({
@@ -101,7 +77,33 @@ export function MobileNav() {
   const [show2FASetup, setShow2FASetup] = useState(false)
   const [notificationsEnabled, setNotificationsEnabled] = useState(true)
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false)
-  const [selectedLanguage, setSelectedLanguage] = useState('English')
+  // Navigation items configuration - Simplified with pill expansion
+  const navItems = [
+    {
+      href: "/",
+      icon: "/icons/house-chimney-heart.svg",
+      label: t.navigation.home,
+      id: "home"
+    },
+    {
+      href: "/appointments",
+      icon: "/icons/clock.svg",
+      label: t.navigation.appointments,
+      id: "appointments"
+    },
+    {
+      href: "/register-insole",
+      icon: "/icons/add1.svg",
+      label: t.navigation.addDevice,
+      id: "register"
+    },
+    {
+      href: "/more",
+      icon: "/icons/more.png",
+      label: t.navigation.more,
+      id: "more"
+    }
+  ]
 
   const isActive = (path: string) => {
     if (path === "/" && pathname === "/") return true
@@ -111,9 +113,9 @@ export function MobileNav() {
 
   function getGreeting() {
     const hour = new Date().getHours()
-    if (hour < 12) return "Good morning,"
-    if (hour < 17) return "Good afternoon,"
-    return "Good evening,"
+    if (hour < 12) return t.greetings.goodMorning
+    if (hour < 17) return t.greetings.goodAfternoon
+    return t.greetings.goodEvening
   }
 
   // BMI Calculator functions
@@ -127,10 +129,10 @@ export function MobileNav() {
   }
 
   const getBMICategory = (bmi: number) => {
-    if (bmi < 18.5) return { category: 'Underweight', color: '#3B82F6' }
-    if (bmi < 25) return { category: 'Normal', color: '#10B981' }
-    if (bmi < 30) return { category: 'Overweight', color: '#F59E0B' }
-    return { category: 'Obese', color: '#EF4444' }
+    if (bmi < 18.5) return { category: t.healthTools.underweight, color: '#3B82F6' }
+    if (bmi < 25) return { category: t.healthTools.normal, color: '#10B981' }
+    if (bmi < 30) return { category: t.healthTools.overweight, color: '#F59E0B' }
+    return { category: t.healthTools.obese, color: '#EF4444' }
   }
 
   // Heart Rate Measurement with 6-second duration
@@ -375,18 +377,12 @@ export function MobileNav() {
     setShowSettings(false)
   }
 
-  const handleLanguageChange = (language: string) => {
-    setSelectedLanguage(language)
+  const handleLanguageChange = (languageCode: string) => {
+    setLanguage(languageCode)
     setShowLanguageModal(false)
-    // Here you would save language preference
   }
 
-  const languages = [
-    { code: 'en', name: 'English', flag: '🇺🇸' },
-    { code: 'rw', name: 'Kinyarwanda', flag: '🇷🇼' },
-    { code: 'fr', name: 'Français', flag: '🇫🇷' },
-    { code: 'sw', name: 'Kiswahili', flag: '🇰🇪' }
-  ]
+  // Remove this as we'll use languages from context
 
   return (
     <>
@@ -574,7 +570,7 @@ export function MobileNav() {
           <div className="bg-white/95 backdrop-blur-xl border-t border-white/30 rounded-t-[24px] p-6 w-full max-w-md shadow-[0_-20px_40px_rgba(0,0,0,0.15)] animate-slide-up">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-[20px] leading-[24px] font-semibold text-[#1E293B] tracking-[-0.2px]">
-                Health Tools
+                {t.navigation.healthTools}
               </h3>
               <button
                 onClick={() => setShowMoreMenu(false)}
@@ -596,8 +592,8 @@ export function MobileNav() {
                   <Calculator className="h-6 w-6 text-[#3B82F6]" />
                 </div>
                 <div className="text-left">
-                  <p className="text-[16px] font-semibold text-[#1E293B]">BMI Calculator</p>
-                  <p className="text-[12px] text-[#64748B]">Calculate your body mass index</p>
+                  <p className="text-[16px] font-semibold text-[#1E293B]">{t.healthTools.bmiCalculator}</p>
+                  <p className="text-[12px] text-[#64748B]">{t.healthTools.calculateBMI}</p>
                 </div>
               </button>
               
@@ -614,8 +610,8 @@ export function MobileNav() {
                   <Apple className="h-6 w-6 text-[#10B981]" />
                 </div>
                 <div className="text-left">
-                  <p className="text-[16px] font-semibold text-[#1E293B]">Nutrition Guide</p>
-                  <p className="text-[12px] text-[#64748B]">Personalized recommendations</p>
+                  <p className="text-[16px] font-semibold text-[#1E293B]">{t.healthTools.nutritionGuide}</p>
+                  <p className="text-[12px] text-[#64748B]">{t.healthTools.personalizedRecommendations}</p>
                 </div>
               </button>
               
@@ -630,8 +626,8 @@ export function MobileNav() {
                   <Heart className="h-6 w-6 text-[#EF4444]" />
                 </div>
                 <div className="text-left">
-                  <p className="text-[16px] font-semibold text-[#1E293B]">Heart Rate Test</p>
-                  <p className="text-[12px] text-[#64748B]">Measure your pulse with animation</p>
+                  <p className="text-[16px] font-semibold text-[#1E293B]">{t.healthTools.heartRateTest}</p>
+                  <p className="text-[12px] text-[#64748B]">{t.healthTools.measurePulse}</p>
                 </div>
               </button>
             </div>
@@ -652,7 +648,7 @@ export function MobileNav() {
                       <Calculator className="h-5 w-5 text-[#3B82F6]" />
                     </div>
                     <h3 className="text-[20px] leading-[24px] font-semibold text-[#1E293B] tracking-[-0.2px]">
-                      BMI Calculator
+                      {t.healthTools.bmiCalculator}
                     </h3>
                   </div>
                   <button
@@ -665,23 +661,23 @@ export function MobileNav() {
 
                 <div className="space-y-4">
                   <div>
-                    <label className="text-[14px] font-medium text-[#1E293B] mb-2 block">Height (cm)</label>
+                    <label className="text-[14px] font-medium text-[#1E293B] mb-2 block">{t.healthTools.height}</label>
                     <input
                       type="number"
                       value={height}
                       onChange={(e) => setHeight(e.target.value)}
-                      placeholder="Enter height in cm"
+                      placeholder={t.healthTools.enterHeight}
                       className="w-full px-4 py-3 bg-white/60 backdrop-blur-sm border border-white/30 rounded-[16px] text-[16px] text-[#1E293B] placeholder-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-transparent"
                     />
                   </div>
                   
                   <div>
-                    <label className="text-[14px] font-medium text-[#1E293B] mb-2 block">Weight (kg)</label>
+                    <label className="text-[14px] font-medium text-[#1E293B] mb-2 block">{t.healthTools.weight}</label>
                     <input
                       type="number"
                       value={weight}
                       onChange={(e) => setWeight(e.target.value)}
-                      placeholder="Enter weight in kg"
+                      placeholder={t.healthTools.enterWeight}
                       className="w-full px-4 py-3 bg-white/60 backdrop-blur-sm border border-white/30 rounded-[16px] text-[16px] text-[#1E293B] placeholder-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-transparent"
                     />
                   </div>
@@ -691,7 +687,7 @@ export function MobileNav() {
                     className="w-full bg-[#3B82F6] hover:bg-[#2563EB] text-white"
                     disabled={!height || !weight}
                   >
-                    Calculate BMI
+                    {t.healthTools.calculateBMI}
                   </Button>
 
                   {bmiResult && (
@@ -702,7 +698,7 @@ export function MobileNav() {
                           {getBMICategory(bmiResult).category}
                         </p>
                         <div className="mt-3 text-[12px] text-[#64748B]">
-                          <p>Normal range: 18.5 - 24.9</p>
+                          <p>{t.healthTools.normalRange}</p>
                         </div>
                       </div>
                     </div>
@@ -720,7 +716,7 @@ export function MobileNav() {
                       <Apple className="h-5 w-5 text-[#10B981]" />
                     </div>
                     <h3 className="text-[20px] leading-[24px] font-semibold text-[#1E293B] tracking-[-0.2px]">
-                      Nutrition Guide
+                      {t.nutrition.title}
                     </h3>
                   </div>
                   <button
@@ -738,23 +734,23 @@ export function MobileNav() {
                         <span className="text-[24px]">🩸</span>
                       </div>
                       <p className="text-[14px] text-[#64748B]">
-                        Enter your current blood glucose level for personalized nutrition recommendations
+                        {t.nutrition.enterGlucose}
                       </p>
                     </div>
                     
                     <div>
                       <label className="text-[14px] font-medium text-[#1E293B] mb-2 block">
-                        Blood Glucose (mg/dL)
+                        {t.nutrition.glucoseLevel}
                       </label>
                       <input
                         type="number"
                         value={bloodGlucose}
                         onChange={(e) => setBloodGlucose(e.target.value)}
-                        placeholder="Enter glucose level (e.g., 95)"
+                        placeholder={t.nutrition.enterGlucose}
                         className="w-full px-4 py-3 bg-white/60 backdrop-blur-sm border border-white/30 rounded-[16px] text-[16px] text-[#1E293B] placeholder-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#10B981] focus:border-transparent"
                       />
                       <p className="text-[12px] text-[#64748B] mt-1">
-                        Normal range: 70-99 mg/dL (fasting)
+                        {t.nutrition.normalRange}
                       </p>
                     </div>
 
@@ -1038,7 +1034,7 @@ export function MobileNav() {
           <div className="bg-white/95 backdrop-blur-xl border-t border-white/30 rounded-t-[24px] p-6 w-full max-w-md shadow-[0_-20px_40px_rgba(0,0,0,0.15)] animate-slide-up max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-[20px] leading-[24px] font-semibold text-[#1E293B] tracking-[-0.2px]">
-                Settings
+                {t.settings.title}
               </h3>
               <button
                 onClick={() => setShowSettings(false)}
@@ -1056,9 +1052,9 @@ export function MobileNav() {
                     <Shield className="h-5 w-5 text-[#10B981]" />
                   </div>
                   <div>
-                    <p className="text-[14px] font-semibold text-[#1E293B]">Two-Factor Auth</p>
+                    <p className="text-[14px] font-semibold text-[#1E293B]">{t.settings.twoFactorAuth}</p>
                     <p className="text-[12px] text-[#64748B]">
-                      {twoFactorEnabled ? 'Enabled' : 'Add extra security'}
+                      {twoFactorEnabled ? t.profile.active : t.settings.enable2FA}
                     </p>
                   </div>
                 </div>
@@ -1070,7 +1066,7 @@ export function MobileNav() {
                       : 'bg-[#10B981] text-white hover:bg-[#059669]'
                   }`}
                 >
-                  {twoFactorEnabled ? 'Disable' : 'Enable'}
+                  {twoFactorEnabled ? t.settings.disable2FA : t.settings.enable2FA}
                 </button>
               </div>
 
@@ -1085,9 +1081,9 @@ export function MobileNav() {
                     )}
                   </div>
                   <div>
-                    <p className="text-[14px] font-semibold text-[#1E293B]">Notifications</p>
+                    <p className="text-[14px] font-semibold text-[#1E293B]">{t.settings.notifications}</p>
                     <p className="text-[12px] text-[#64748B]">
-                      {notificationsEnabled ? 'Enabled' : 'Disabled'}
+                      {notificationsEnabled ? t.profile.active : t.profile.inactive}
                     </p>
                   </div>
                 </div>
@@ -1099,7 +1095,7 @@ export function MobileNav() {
                       : 'bg-[#3B82F6] text-white hover:bg-[#2563EB]'
                   }`}
                 >
-                  {notificationsEnabled ? 'Turn Off' : 'Turn On'}
+                  {notificationsEnabled ? t.settings.disableNotifications : t.settings.enableNotifications}
                 </button>
               </div>
 
@@ -1113,12 +1109,12 @@ export function MobileNav() {
                     <Globe className="h-5 w-5 text-[#8B5CF6]" />
                   </div>
                   <div className="text-left">
-                    <p className="text-[14px] font-semibold text-[#1E293B]">Language</p>
-                    <p className="text-[12px] text-[#64748B]">{selectedLanguage}</p>
+                    <p className="text-[14px] font-semibold text-[#1E293B]">{t.settings.language}</p>
+                    <p className="text-[12px] text-[#64748B]">{languages.find(lang => lang.code === currentLanguage)?.name}</p>
                   </div>
                 </div>
                 <div className="text-[16px]">
-                  {languages.find(lang => lang.name === selectedLanguage)?.flag}
+                  {languages.find(lang => lang.code === currentLanguage)?.flag}
                 </div>
               </button>
 
@@ -1131,8 +1127,8 @@ export function MobileNav() {
                   <Trash2 className="h-5 w-5 text-[#EF4444]" />
                 </div>
                 <div className="text-left">
-                  <p className="text-[14px] font-semibold text-[#EF4444]">Delete Account</p>
-                  <p className="text-[12px] text-[#64748B]">Permanently remove your account</p>
+                  <p className="text-[14px] font-semibold text-[#EF4444]">{t.settings.deleteAccount}</p>
+                  <p className="text-[12px] text-[#64748B]">{t.settings.deleteWarning}</p>
                 </div>
               </button>
             </div>
@@ -1150,7 +1146,7 @@ export function MobileNav() {
                   <Globe className="h-5 w-5 text-[#8B5CF6]" />
                 </div>
                 <h3 className="text-[20px] leading-[24px] font-semibold text-[#1E293B] tracking-[-0.2px]">
-                  Select Language
+                  {t.common.languageSelection}
                 </h3>
               </div>
               <button
@@ -1165,9 +1161,9 @@ export function MobileNav() {
               {languages.map((language) => (
                 <button
                   key={language.code}
-                  onClick={() => handleLanguageChange(language.name)}
+                  onClick={() => handleLanguageChange(language.code)}
                   className={`w-full flex items-center gap-4 p-4 rounded-[16px] transition-all ${
-                    selectedLanguage === language.name
+                    currentLanguage === language.code
                       ? 'bg-[#8B5CF6]/20 border-2 border-[#8B5CF6]/30'
                       : 'bg-gray-50 hover:bg-gray-100 border-2 border-transparent'
                   }`}
@@ -1176,7 +1172,7 @@ export function MobileNav() {
                   <div className="text-left flex-1">
                     <p className="text-[16px] font-medium text-[#1E293B]">{language.name}</p>
                   </div>
-                  {selectedLanguage === language.name && (
+                  {currentLanguage === language.code && (
                     <CheckCircle className="h-5 w-5 text-[#8B5CF6]" />
                   )}
                 </button>
@@ -1196,7 +1192,7 @@ export function MobileNav() {
                   <Shield className="h-5 w-5 text-[#10B981]" />
                 </div>
                 <h3 className="text-[20px] leading-[24px] font-semibold text-[#1E293B] tracking-[-0.2px]">
-                  Setup 2FA
+                  {t.settings.setup2FA}
                 </h3>
               </div>
               <button
