@@ -6,6 +6,9 @@ import { ThemeProvider } from "@/components/theme-provider"
 
 import { MobileNav } from "@/components/mobile-nav"
 import { LanguageProvider } from "@/context/language-context"
+import { TTSProvider } from "@/context/tts-context"
+import { FloatingReadAloudButton } from "@/components/read-aloud-button"
+import { AutoTTSContainer } from "@/hooks/use-auto-tts"
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -29,7 +32,8 @@ export default function RootLayout({
       <body className={`${inter.variable} font-sans`}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <LanguageProvider>
-            <div className="flex h-screen bg-gradient-to-br from-[#F8FAFC] via-[#FFFFFF] to-[#F0F4F8]">
+            <TTSProvider>
+              <div className="flex h-screen bg-gradient-to-br from-[#F8FAFC] via-[#FFFFFF] to-[#F0F4F8]">
 
               
               {/* Main Content Area */}
@@ -38,11 +42,17 @@ export default function RootLayout({
                 <MobileNav />
                 
                 {/* Page Content */}
-                <div className="flex-1 overflow-auto pb-24">
-                  {children}
+                <div className="flex-1 overflow-auto pb-32">
+                  <AutoTTSContainer>
+                    {children}
+                  </AutoTTSContainer>
                 </div>
               </div>
+              
+              {/* Floating Read Aloud Button */}
+              <FloatingReadAloudButton />
             </div>
+            </TTSProvider>
           </LanguageProvider>
         </ThemeProvider>
       </body>

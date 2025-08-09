@@ -248,6 +248,133 @@ body {
     transform: translate(-50%, -50%);
     transition: width 400ms, height 400ms;
   }
+
+  /* Island Navigation Styles */
+  .island-nav {
+    animation: islandEntrance 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+    min-width: fit-content;
+    max-width: 90vw;
+  }
+
+  @keyframes islandEntrance {
+    0% {
+      transform: translateY(100px) scale(0.8);
+      opacity: 0;
+    }
+    60% {
+      transform: translateY(-5px) scale(1.02);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(0px) scale(1);
+      opacity: 1;
+    }
+  }
+
+  /* Pill expansion animation for island navigation */
+  .pill-expanded {
+    animation: islandPillExpand 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+  }
+
+  @keyframes islandPillExpand {
+    0% {
+      transform: scale(1);
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    50% {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(37,99,235,0.4);
+    }
+    100% {
+      transform: scale(1.05);
+      border-radius: 9999px;
+      box-shadow: 0 4px 16px rgba(37,99,235,0.3);
+    }
+  }
+
+  /* Island navigation hover effects */
+  @keyframes islandFloat {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-2px);
+    }
+  }
+
+  .island-nav:hover {
+    animation: islandFloat 2s ease-in-out infinite;
+  }
+
+  /* Responsive centering for island navigation */
+  @media (max-width: 640px) {
+    .island-nav {
+      max-width: 85vw;
+      padding: 0.75rem 1.5rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .island-nav {
+      max-width: 80vw;
+      padding: 0.75rem 1rem;
+    }
+  }
+
+  /* Ensure perfect centering */
+  .island-nav-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    pointer-events: none;
+  }
+
+  .island-nav-container > * {
+    pointer-events: auto;
+  }
+
+  /* Prevent layout shift during animations */
+  .island-nav {
+    transform-origin: center center;
+    will-change: transform, box-shadow;
+  }
+
+  /* Island navigation item hover */
+  .island-nav-item {
+    transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+  }
+
+  .island-nav-item:hover {
+    transform: translateY(-1px);
+  }
+
+  /* Active state glow effect */
+  .island-nav-active {
+    position: relative;
+  }
+
+  .island-nav-active::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    background: linear-gradient(45deg, #2563eb, #3b82f6, #2563eb);
+    background-size: 200% 200%;
+    animation: gradientShift 3s ease infinite;
+    z-index: -1;
+    opacity: 0.3;
+  }
+
+  @keyframes gradientShift {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
   
   .nav-item-ripple:active::before {
     width: 24px;

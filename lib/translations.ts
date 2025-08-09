@@ -449,6 +449,27 @@ export const enTranslations: TranslationKeys = {
     signalStream: "Signal Stream",
     signal: "Signal",
   },
+  // Text-to-Speech
+  tts: {
+    readAloud: "Read Aloud",
+    stopReading: "Stop Reading",
+    enableTTS: "Enable Text-to-Speech",
+    disableTTS: "Disable Text-to-Speech",
+    testVoice: "Test Voice",
+    speechSpeed: "Speech Speed",
+    voicePitch: "Voice Pitch",
+    volume: "Volume",
+    settings: "Text-to-Speech Settings",
+    notSupported: "Text-to-Speech Not Available",
+    browserNotSupported: "Your browser doesn't support text-to-speech functionality.",
+    howToUse: "How to Use",
+    instructions: [
+      "Look for the speaker icon 🔊 next to text content",
+      "Click the floating button to read the entire page",
+      "Text will be read in your selected language",
+      "Click again to stop reading"
+    ],
+  },
 };
 
 // Kinyarwanda translations
@@ -670,6 +691,27 @@ export const rwTranslations: TranslationKeys = {
     signalStream: "Ikimenyetso",
     signal: "Ikimenyetso",
   },
+  // Text-to-Speech
+  tts: {
+    readAloud: "Soma mu Ijwi",
+    stopReading: "Hagarika Gusoma",
+    enableTTS: "Gushyira Gusoma mu Ijwi",
+    disableTTS: "Guhagarika Gusoma mu Ijwi",
+    testVoice: "Gerageza Ijwi",
+    speechSpeed: "Umuvuduko w'Ijwi",
+    voicePitch: "Urwego rw'Ijwi",
+    volume: "Uburebure bw'Ijwi",
+    settings: "Igenamiterere ry'Ijwi",
+    notSupported: "Gusoma mu Ijwi Ntibikiri",
+    browserNotSupported: "Mushakisha wawe ntishobora gusoma mu ijwi.",
+    howToUse: "Uburyo bwo Gukoresha",
+    instructions: [
+      "Shaka ikimenyetso cy'ijwi 🔊 hafi y'inyandiko",
+      "Kanda buto yo gusoma urupapuro rwose",
+      "Inyandiko izasomwa mu rurimi rwahisemo",
+      "Kanda kandi kugira ngo uhagarike gusoma"
+    ],
+  },
 };
 
 // French translations
@@ -890,6 +932,27 @@ export const frTranslations: TranslationKeys = {
     enterPassword: "Entrez le mot de passe de l'appareil",
     signalStream: "Flux de Signal",
     signal: "Signal",
+  },
+  // Text-to-Speech
+  tts: {
+    readAloud: "Lire à Haute Voix",
+    stopReading: "Arrêter la Lecture",
+    enableTTS: "Activer la Synthèse Vocale",
+    disableTTS: "Désactiver la Synthèse Vocale",
+    testVoice: "Tester la Voix",
+    speechSpeed: "Vitesse de Parole",
+    voicePitch: "Hauteur de Voix",
+    volume: "Volume",
+    settings: "Paramètres de Synthèse Vocale",
+    notSupported: "Synthèse Vocale Non Disponible",
+    browserNotSupported: "Votre navigateur ne supporte pas la synthèse vocale.",
+    howToUse: "Comment Utiliser",
+    instructions: [
+      "Cherchez l'icône haut-parleur 🔊 à côté du contenu texte",
+      "Cliquez sur le bouton flottant pour lire toute la page",
+      "Le texte sera lu dans votre langue sélectionnée",
+      "Cliquez à nouveau pour arrêter la lecture"
+    ],
   },
 };
 

@@ -39,6 +39,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { ReadAloudButton } from "@/components/read-aloud-button"
 import { motion } from "framer-motion"
 import { motion } from "framer-motion"
 import { AnimatePresence } from "framer-motion"
@@ -141,7 +142,13 @@ export function RegisterInsoleForm() {
         <TabsContent value="setup" className="mt-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-2xl text-gray-800">Connect Your Smart Insole</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-2xl text-gray-800">Connect Your Smart Insole</CardTitle>
+                <ReadAloudButton 
+                  text="Connect Your Smart Insole. Follow these steps to connect your new smart insole device to the app"
+                  size="sm"
+                />
+              </div>
               <CardDescription className="text-gray-600 text-base">
                 Follow these steps to connect your new smart insole device to the app
               </CardDescription>
@@ -350,7 +357,13 @@ export function RegisterInsoleForm() {
         <TabsContent value="configure" className="mt-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-2xl text-gray-800">Configure Your Device</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-2xl text-gray-800">Configure Your Device</CardTitle>
+                <ReadAloudButton 
+                  text="Configure Your Device. Customize your smart insole settings"
+                  size="sm"
+                />
+              </div>
               <CardDescription className="text-gray-600 text-base">
                 Customize your smart insole settings
               </CardDescription>
@@ -452,7 +465,13 @@ export function RegisterInsoleForm() {
         <TabsContent value="complete" className="mt-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-2xl text-gray-800">Registration Complete!</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-2xl text-gray-800">Registration Complete!</CardTitle>
+                <ReadAloudButton 
+                  text="Registration Complete! Your smart insole has been successfully registered"
+                  size="sm"
+                />
+              </div>
               <CardDescription className="text-gray-600 text-base">
                 Your smart insole has been successfully registered
               </CardDescription>

@@ -22,6 +22,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
 import { useLanguage } from "@/context/language-context"
+import { ReadAloudButton } from "@/components/read-aloud-button"
+import { TTSText, TTSH3, TTSP } from "@/components/tts-text"
 
 // Lazy-loaded healthcare professionals data
 const getHealthcareProfessionals = () => [
@@ -126,10 +128,15 @@ export function AppointmentForm() {
         <div className="w-16 h-16 flex items-center justify-center rounded-full bg-green-100 mb-4">
           <Check className="w-8 h-8 text-green-600" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">{t.appointment.bookingConfirmed}</h2>
-        <p className="text-gray-600 mb-6 text-center">
+        <TTSText className="text-2xl font-bold text-gray-800 mb-2">
+          {t.appointment.bookingConfirmed}
+        </TTSText>
+        <TTSText 
+          className="text-gray-600 mb-6 text-center"
+          readText={`Your appointment has been scheduled for ${date ? format(date, "PPP") : ""} at ${selectedTime} with ${professional?.name}`}
+        >
           Your appointment has been scheduled for {date ? format(date, "PPP") : ""} at {selectedTime} with {professional?.name}.
-        </p>
+        </TTSText>
         <Button onClick={resetForm} className="bg-blue-600 hover:bg-blue-700">
           {t.appointment.book}
         </Button>
@@ -159,10 +166,19 @@ export function AppointmentForm() {
           {/* Search and Filter Section */}
           <Card className="mb-6 border-0 shadow-sm overflow-hidden">
             <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6">
-              <CardTitle className="text-xl font-semibold">{t.appointment.professionals}</CardTitle>
-              <CardDescription className="text-blue-100">
-                {t.common.search}
-              </CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-xl font-semibold">{t.appointment.professionals}</CardTitle>
+                  <CardDescription className="text-blue-100">
+                    {t.common.search}
+                  </CardDescription>
+                </div>
+                <ReadAloudButton 
+                  text={`${t.appointment.professionals}. ${t.common.search}`}
+                  size="sm"
+                  className="text-white hover:bg-white/20"
+                />
+              </div>
             </CardHeader>
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row gap-4">

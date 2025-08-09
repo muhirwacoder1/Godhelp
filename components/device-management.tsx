@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
+import { ReadAloudButton } from "@/components/read-aloud-button"
 
 type Device = {
   id: string
@@ -49,7 +50,13 @@ export function DeviceManagement() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Connected Devices</CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle>Connected Devices</CardTitle>
+          <ReadAloudButton 
+            text="Connected Devices. Manage your foot pressure monitoring devices"
+            size="sm"
+          />
+        </div>
         <CardDescription>
           Manage your foot pressure monitoring devices
         </CardDescription>

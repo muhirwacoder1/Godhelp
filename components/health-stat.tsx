@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react"
+import { ReadAloudButton } from "@/components/read-aloud-button"
 
 interface HealthStatProps {
   icon: LucideIcon
@@ -31,7 +32,13 @@ export function HealthStat({
         <Icon className="w-10 h-10" style={{ color: iconColor }} />
       </div>
       <div className="space-y-2 flex-1">
-        <div className="text-gray-500">{label}</div>
+        <div className="flex items-center justify-between">
+          <div className="text-gray-500">{label}</div>
+          <ReadAloudButton 
+            text={`${label}: ${value} ${unit}. Range from ${min} to ${max} ${unit}`}
+            size="sm"
+          />
+        </div>
         <div className="flex items-end gap-2">
           <span className="text-5xl font-bold" style={{ color: iconColor }}>
             {value}

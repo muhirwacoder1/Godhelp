@@ -19,6 +19,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Switch } from "@/components/ui/switch"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { useLanguage } from "@/context/language-context"
+import { ReadAloudButton } from "@/components/read-aloud-button"
 import Link from "next/link"
 
 // Initial profile data
@@ -189,7 +190,14 @@ export function ProfileForm() {
             {/* Profile Edit Card */}
             <Card className="bg-white shadow-md rounded-xl overflow-hidden border-0 md:col-span-2">
               <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6">
-                <CardTitle className="text-xl font-semibold">{t.profile.information}</CardTitle>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-xl font-semibold">{t.profile.information}</CardTitle>
+                  <ReadAloudButton 
+                    text={`${t.profile.information}. ${isEditing ? "Edit your profile information below" : "Your personal information and settings"}`}
+                    size="sm"
+                    className="text-white hover:bg-white/20"
+                  />
+                </div>
                 <CardDescription className="text-blue-100 mt-1">
                   {isEditing ? "Edit your profile information below" : "Your personal information and settings"}
                 </CardDescription>
@@ -352,7 +360,14 @@ export function ProfileForm() {
         <TabsContent value="devices">
           <Card className="bg-white shadow-md rounded-xl overflow-hidden border-0">
             <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6">
-              <CardTitle className="text-xl font-semibold">{t.profile.connectedDevices}</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-xl font-semibold">{t.profile.connectedDevices}</CardTitle>
+                <ReadAloudButton 
+                  text={`${t.profile.connectedDevices}. ${t.profile.manageDevices}`}
+                  size="sm"
+                  className="text-white hover:bg-white/20"
+                />
+              </div>
               <CardDescription className="text-blue-100 mt-1">
                 {t.profile.manageDevices}
               </CardDescription>

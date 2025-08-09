@@ -8,6 +8,9 @@ import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { useLanguage } from "@/context/language-context"
+import { TTSSettings } from "@/components/tts-settings"
+import { ReadAloudButton } from "@/components/read-aloud-button"
+import { TTSText, TTSH3, TTSP } from "@/components/tts-text"
 import { 
   Calculator, 
   Apple, 
@@ -25,7 +28,8 @@ import {
   Globe,
   Smartphone,
   Key,
-  AlertTriangle
+  AlertTriangle,
+  Volume2
 } from "lucide-react"
 
 
@@ -436,28 +440,31 @@ export function MobileNav() {
 
         {/* Greeting Below */}
         <div>
-          <p className="text-[28px] leading-[34px] font-bold text-[#1E293B] tracking-[-0.5px]">
+          <TTSText 
+            className="text-[28px] leading-[34px] font-bold text-[#1E293B] tracking-[-0.5px]"
+            readText={`${user.greeting} ${user.name.split(' ')[user.name.split(' ').length - 1]}`}
+          >
             {user.greeting} {user.name.split(' ')[user.name.split(' ').length - 1]} <span className="text-[32px]">👋</span>
-          </p>
+          </TTSText>
         </div>
       </div>
 
-      {/* Bottom Navigation Bar - Compact with Pill Expansion - All Screens */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 pb-safe">
-        {/* Navigation Container - Reduced height, full width */}
-        <nav className="bg-[#2563eb] backdrop-blur-[8px] px-4 py-3 shadow-[0_-2px_10px_rgba(0,0,0,0.1)]">
+      {/* Island-Style Floating Navigation Bar */}
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 island-nav-container">
+        {/* Navigation Container - Island Style */}
+        <nav className="island-nav bg-gradient-to-r from-white/95 via-white/90 to-white/95 backdrop-blur-xl border border-white/30 rounded-full px-6 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.12)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.16)] transition-all duration-300 mx-auto">
           {/* Navigation Items Container */}
-          <div className="flex items-center justify-around">
+          <div className="flex items-center justify-center gap-3">
             {navItems.map((item, index) => (
               item.id === 'more' ? (
                 <button
                   key={item.id}
                   onClick={handleMoreClick}
                   className={cn(
-                    // Base styles - circle buttons by default
-                    "nav-item-tap relative flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.4,0.0,0.2,1)]",
-                    // Default state - small circles
-                    "w-10 h-10 rounded-full text-white/70 hover:text-white/90 hover:scale-110"
+                    // Base styles - modern island navigation
+                    "nav-item-tap island-nav-item relative flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.4,0.0,0.2,1)]",
+                    // More button style
+                    "w-11 h-11 rounded-full text-gray-600 hover:text-gray-800 hover:bg-gray-100/50 hover:scale-105"
                   )}
                 >
                   {/* Icon */}
@@ -467,7 +474,7 @@ export function MobileNav() {
                       alt={item.label}
                       width={20}
                       height={20}
-                      className="brightness-0 invert transition-all duration-300"
+                      className="opacity-70 hover:opacity-100 transition-all duration-300"
                     />
                   </div>
                 </button>
@@ -476,16 +483,16 @@ export function MobileNav() {
                   key={item.id}
                   href={item.href}
                   className={cn(
-                    // Base styles - circle buttons by default
-                    "nav-item-tap relative flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.4,0.0,0.2,1)]",
-                    // Default state - small circles
+                    // Base styles - modern island navigation
+                    "nav-item-tap island-nav-item relative flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.4,0.0,0.2,1)]",
+                    // Default state - subtle hover
                     !isActive(item.href) && [
-                      "w-10 h-10 rounded-full text-white/70 hover:text-white/90 hover:scale-110"
+                      "w-11 h-11 rounded-full text-gray-600 hover:text-gray-800 hover:bg-gray-100/50 hover:scale-105"
                     ],
-                    // Active state - expanded pill with label
+                    // Active state - prominent with gradient
                     isActive(item.href) && [
-                      "bg-white text-[#2563eb] rounded-full px-4 py-2 shadow-[0_2px_8px_rgba(0,0,0,0.15)]",
-                      "pill-expanded"
+                      "bg-gradient-to-r from-[#2563eb] to-[#3b82f6] text-white rounded-full px-5 py-3 shadow-[0_4px_16px_rgba(37,99,235,0.3)]",
+                      "pill-expanded scale-105 island-nav-active"
                     ]
                   )}
                 >
@@ -499,14 +506,14 @@ export function MobileNav() {
                       className={cn(
                         "transition-all duration-300",
                         isActive(item.href)
-                          ? "brightness-0 saturate-100" // Dark icon for active state
-                          : "brightness-0 invert" // White icon for inactive state
+                          ? "brightness-0 invert" // White icon for active state
+                          : "opacity-70 hover:opacity-100" // Gray icon for inactive state
                       )}
                     />
 
                     {/* Notification badge for appointments */}
                     {item.id === "appointments" && (
-                      <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full border border-[#2563eb]"></div>
+                      <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white shadow-sm"></div>
                     )}
                   </div>
 
@@ -647,9 +654,15 @@ export function MobileNav() {
                     <div className="w-10 h-10 bg-[#3B82F6]/10 rounded-[12px] flex items-center justify-center">
                       <Calculator className="h-5 w-5 text-[#3B82F6]" />
                     </div>
-                    <h3 className="text-[20px] leading-[24px] font-semibold text-[#1E293B] tracking-[-0.2px]">
-                      {t.healthTools.bmiCalculator}
-                    </h3>
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-[20px] leading-[24px] font-semibold text-[#1E293B] tracking-[-0.2px]">
+                        {t.healthTools.bmiCalculator}
+                      </h3>
+                      <ReadAloudButton 
+                        text={`${t.healthTools.bmiCalculator}. Calculate your body mass index`}
+                        size="sm"
+                      />
+                    </div>
                   </div>
                   <button
                     onClick={() => setActiveFeature(null)}
@@ -715,9 +728,15 @@ export function MobileNav() {
                     <div className="w-10 h-10 bg-[#10B981]/10 rounded-[12px] flex items-center justify-center">
                       <Apple className="h-5 w-5 text-[#10B981]" />
                     </div>
-                    <h3 className="text-[20px] leading-[24px] font-semibold text-[#1E293B] tracking-[-0.2px]">
-                      {t.nutrition.title}
-                    </h3>
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-[20px] leading-[24px] font-semibold text-[#1E293B] tracking-[-0.2px]">
+                        {t.nutrition.title}
+                      </h3>
+                      <ReadAloudButton 
+                        text={`${t.nutrition.title}. Get personalized nutrition recommendations`}
+                        size="sm"
+                      />
+                    </div>
                   </div>
                   <button
                     onClick={() => setActiveFeature(null)}
@@ -1045,6 +1064,11 @@ export function MobileNav() {
             </div>
 
             <div className="space-y-4">
+              {/* Text-to-Speech Settings */}
+              <div className="p-4 rounded-[16px] bg-gradient-to-r from-[#10B981]/10 to-[#059669]/10 border border-[#10B981]/20">
+                <TTSSettings />
+              </div>
+
               {/* Two Factor Authentication */}
               <div className="flex items-center justify-between p-4 rounded-[16px] bg-gradient-to-r from-[#10B981]/10 to-[#059669]/10 border border-[#10B981]/20">
                 <div className="flex items-center gap-3">
@@ -1052,10 +1076,12 @@ export function MobileNav() {
                     <Shield className="h-5 w-5 text-[#10B981]" />
                   </div>
                   <div>
-                    <p className="text-[14px] font-semibold text-[#1E293B]">{t.settings.twoFactorAuth}</p>
-                    <p className="text-[12px] text-[#64748B]">
+                    <TTSText className="text-[14px] font-semibold text-[#1E293B]">
+                      {t.settings.twoFactorAuth}
+                    </TTSText>
+                    <TTSText className="text-[12px] text-[#64748B]">
                       {twoFactorEnabled ? t.profile.active : t.settings.enable2FA}
-                    </p>
+                    </TTSText>
                   </div>
                 </div>
                 <button
@@ -1081,10 +1107,12 @@ export function MobileNav() {
                     )}
                   </div>
                   <div>
-                    <p className="text-[14px] font-semibold text-[#1E293B]">{t.settings.notifications}</p>
-                    <p className="text-[12px] text-[#64748B]">
+                    <TTSText className="text-[14px] font-semibold text-[#1E293B]">
+                      {t.settings.notifications}
+                    </TTSText>
+                    <TTSText className="text-[12px] text-[#64748B]">
                       {notificationsEnabled ? t.profile.active : t.profile.inactive}
-                    </p>
+                    </TTSText>
                   </div>
                 </div>
                 <button
@@ -1109,8 +1137,12 @@ export function MobileNav() {
                     <Globe className="h-5 w-5 text-[#8B5CF6]" />
                   </div>
                   <div className="text-left">
-                    <p className="text-[14px] font-semibold text-[#1E293B]">{t.settings.language}</p>
-                    <p className="text-[12px] text-[#64748B]">{languages.find(lang => lang.code === currentLanguage)?.name}</p>
+                    <TTSText className="text-[14px] font-semibold text-[#1E293B]">
+                      {t.settings.language}
+                    </TTSText>
+                    <TTSText className="text-[12px] text-[#64748B]">
+                      {languages.find(lang => lang.code === currentLanguage)?.name}
+                    </TTSText>
                   </div>
                 </div>
                 <div className="text-[16px]">

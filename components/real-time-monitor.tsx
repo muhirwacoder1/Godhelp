@@ -22,6 +22,8 @@ import {
   Scale
 } from "lucide-react"
 import { useLanguage } from "@/context/language-context"
+import { ReadAloudButton } from "@/components/read-aloud-button"
+import { TTSText, TTSH3, TTSP } from "@/components/tts-text"
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import {
   Card,
@@ -473,12 +475,18 @@ export function RealTimeMonitor() {
               />
             </div>
             <div>
-              <h3 className="text-[18px] leading-[24px] font-semibold text-[#1E293B] tracking-[-0.2px]">
-                Status
-              </h3>
-              <p className="text-[12px] leading-[16px] text-[#64748B] font-medium tracking-[0.1px]">
+              <div className="flex items-center justify-between">
+                <h3 className="text-[18px] leading-[24px] font-semibold text-[#1E293B] tracking-[-0.2px]">
+                  Status
+                </h3>
+                <ReadAloudButton 
+                  text={`Device status: ${isActive && isInsoleConnected() ? t.monitor.active : t.monitor.disconnected}`}
+                  size="sm"
+                />
+              </div>
+              <TTSText className="text-[12px] leading-[16px] text-[#64748B] font-medium tracking-[0.1px]">
                 {isActive && isInsoleConnected() ? t.monitor.active : t.monitor.disconnected}
-              </p>
+              </TTSText>
             </div>
           </div>
           {isActive && isInsoleConnected() ? (
@@ -512,13 +520,16 @@ export function RealTimeMonitor() {
               <Heart className="h-6 w-6 text-[#EC4899]" />
             </div>
             <div>
-              <h3 className="text-[14px] leading-[20px] font-medium text-[#64748B] tracking-[0.1px]">
+              <TTSText className="text-[14px] leading-[20px] font-medium text-[#64748B] tracking-[0.1px]">
                 Heart Rate
-              </h3>
+              </TTSText>
               <div className="flex items-baseline gap-1">
-                <span className="text-[32px] leading-[34px] font-bold text-[#1E293B] tracking-[-0.5px]">
+                <TTSText 
+                  className="text-[32px] leading-[34px] font-bold text-[#1E293B] tracking-[-0.5px]"
+                  readText={`Heart rate: ${data.heartRate} beats per minute`}
+                >
                   {data.heartRate}
-                </span>
+                </TTSText>
                 <span className="text-[14px] leading-[20px] font-medium text-[#64748B]">bpm</span>
               </div>
             </div>
@@ -538,14 +549,19 @@ export function RealTimeMonitor() {
               <Thermometer className="h-6 w-6 text-[#4A90E2]" />
             </div>
             <div>
-              <h3 className="text-[14px] leading-[20px] font-medium text-[#64748B] tracking-[0.1px]">
+              <TTSText className="text-[14px] leading-[20px] font-medium text-[#64748B] tracking-[0.1px]">
                 Temperature
-              </h3>
+              </TTSText>
               <div className="flex items-baseline gap-1">
-                <span className="text-[32px] leading-[34px] font-bold text-[#1E293B] tracking-[-0.5px]">
+                <TTSText 
+                  className="text-[32px] leading-[34px] font-bold text-[#1E293B] tracking-[-0.5px]"
+                  readText={`Temperature: ${data.temperature} degrees Celsius`}
+                >
                   {data.temperature}
-                </span>
-                <span className="text-[14px] leading-[20px] font-medium text-[#64748B]">°C</span>
+                </TTSText>
+                <TTSText className="text-[14px] leading-[20px] font-medium text-[#64748B]">
+                  °C
+                </TTSText>
               </div>
             </div>
           </div>
@@ -573,9 +589,15 @@ export function RealTimeMonitor() {
           {/* Heel Pressure */}
           <div className="bg-white/80 backdrop-blur-sm rounded-[20px] p-6 shadow-[0_8px_32px_rgba(0,0,0,0.08)] border border-white/20">
             <div className="text-center mb-4">
-              <h3 className="text-[18px] leading-[24px] font-semibold text-[#1E293B] tracking-[-0.2px] mb-1">
-                {t.monitor.heel}
-              </h3>
+              <div className="flex items-center justify-between mb-1">
+                <h3 className="text-[18px] leading-[24px] font-semibold text-[#1E293B] tracking-[-0.2px]">
+                  {t.monitor.heel}
+                </h3>
+                <ReadAloudButton 
+                  text={`${t.monitor.heel} pressure: ${data.heel} mmHg. Status: ${data.heelStatus}`}
+                  size="sm"
+                />
+              </div>
               <div className="flex items-baseline justify-center gap-1">
                 <span className="text-[24px] leading-[28px] font-semibold text-[#4A90E2]">
                   {data.heel}
@@ -604,9 +626,15 @@ export function RealTimeMonitor() {
           {/* Middle Pressure */}
           <div className="bg-white/80 backdrop-blur-sm rounded-[20px] p-6 shadow-[0_8px_32px_rgba(0,0,0,0.08)] border border-white/20">
             <div className="text-center mb-4">
-              <h3 className="text-[18px] leading-[24px] font-semibold text-[#1E293B] tracking-[-0.2px] mb-1">
-                {t.monitor.middle}
-              </h3>
+              <div className="flex items-center justify-between mb-1">
+                <h3 className="text-[18px] leading-[24px] font-semibold text-[#1E293B] tracking-[-0.2px]">
+                  {t.monitor.middle}
+                </h3>
+                <ReadAloudButton 
+                  text={`${t.monitor.middle} pressure: ${data.middle} mmHg. Status: ${data.middleStatus}`}
+                  size="sm"
+                />
+              </div>
               <div className="flex items-baseline justify-center gap-1">
                 <span className="text-[24px] leading-[28px] font-semibold text-[#F59E0B]">
                   {data.middle}
@@ -635,9 +663,15 @@ export function RealTimeMonitor() {
           {/* Toe Pressure */}
           <div className="bg-white/80 backdrop-blur-sm rounded-[20px] p-6 shadow-[0_8_32px_rgba(0,0,0,0.08)] border border-white/20">
             <div className="text-center mb-4">
-              <h3 className="text-[18px] leading-[24px] font-semibold text-[#1E293B] tracking-[-0.2px] mb-1">
-                {t.monitor.toe}
-              </h3>
+              <div className="flex items-center justify-between mb-1">
+                <h3 className="text-[18px] leading-[24px] font-semibold text-[#1E293B] tracking-[-0.2px]">
+                  {t.monitor.toe}
+                </h3>
+                <ReadAloudButton 
+                  text={`${t.monitor.toe} pressure: ${data.toe} mmHg. Status: ${data.toeStatus}`}
+                  size="sm"
+                />
+              </div>
               <div className="flex items-baseline justify-center gap-1">
                 <span className="text-[24px] leading-[28px] font-semibold text-[#10B981]">
                   {data.toe}
@@ -675,9 +709,15 @@ export function RealTimeMonitor() {
                   <BarChart3 className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <CardTitle className="text-[24px] leading-[30px] font-bold text-[#1E293B] tracking-[-0.4px] mb-1">
-                    Ulcer Risk Analytics
-                  </CardTitle>
+                  <div className="flex items-center justify-between mb-1">
+                    <CardTitle className="text-[24px] leading-[30px] font-bold text-[#1E293B] tracking-[-0.4px]">
+                      Ulcer Risk Analytics
+                    </CardTitle>
+                    <ReadAloudButton 
+                      text="Ulcer Risk Analytics. AI-powered foot ulcer risk prediction and monitoring"
+                      size="sm"
+                    />
+                  </div>
                   <CardDescription className="text-[14px] text-[#64748B] font-medium">
                     {isInsoleConnected() && ulcerRiskData.length > 0 
                       ? `${t.monitor.realTimeMonitoring} • ${ulcerRiskData.length} ${t.monitor.dataPoints}`

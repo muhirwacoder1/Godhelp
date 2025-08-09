@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { ReadAloudButton } from "@/components/read-aloud-button"
 
 type Language = {
   code: string
@@ -22,7 +23,13 @@ export function LanguageSettings() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Language Settings</CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle>Language Settings</CardTitle>
+          <ReadAloudButton 
+            text="Language Settings. Choose your preferred language for the application"
+            size="sm"
+          />
+        </div>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
