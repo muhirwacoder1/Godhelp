@@ -150,8 +150,8 @@ export function MobileNav() {
         if (prev >= 100) {
           clearInterval(interval)
           setIsHeartRateMeasuring(false)
-          // Simulate measured heart rate (70-100 bpm) - always show "Normal"
-          const simulatedRate = Math.floor(Math.random() * 20) + 75 // 75-95 bpm (normal range)
+          // Simulate measured heart rate (75-76 bpm) - always show "Normal"
+          const simulatedRate = Math.floor(Math.random() * 2) + 75 // 75-76 bpm (narrow range)
           setMeasuredHeartRate(simulatedRate)
           return 100
         }

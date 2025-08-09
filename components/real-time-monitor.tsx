@@ -236,8 +236,8 @@ export function RealTimeMonitor() {
 
       const rand = (min: number, max: number) => Math.random() * (max - min) + min
 
-      // Heart rate: 85-110 bpm for walking
-      const heartRate = Math.round(rand(85, 110))
+      // Heart rate: 75-76 bpm for resting/normal state
+      const heartRate = Math.round(rand(75, 76))
 
       // Body temp: 36.5-37.1 °C with slight variation
       const temperature = +(rand(36.5, 37.1).toFixed(1))
