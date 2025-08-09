@@ -40,6 +40,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { ReadAloudButton } from "@/components/read-aloud-button"
+import { TTSText, TTSLabel } from "@/components/tts-text"
 import { motion } from "framer-motion"
 import { motion } from "framer-motion"
 import { AnimatePresence } from "framer-motion"
@@ -60,6 +61,7 @@ import { motion } from "framer-motion"
 import { motion } from "framer-motion"
 import { motion } from "framer-motion"
 import { motion } from "framer-motion"
+import { useLanguage } from "@/context/language-context"
 
 // Lazy-loaded mock devices for demonstration
 const getMockDevices = () => [
@@ -165,13 +167,13 @@ export function RegisterInsoleForm() {
                   1
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-xl font-medium text-gray-800">Power on your insole device</h3>
-                  <p className="text-gray-600">
+                  <TTSText className="text-xl font-medium text-gray-800">Power on your insole device</TTSText>
+                  <TTSText className="text-gray-600">
                     Press and hold the power button for 3 seconds until the LED light turns blue
-                  </p>
+                  </TTSText>
                   <div className="flex items-center mt-2 text-blue-600">
                     <Power className="w-5 h-5 mr-2" />
-                    <span className="text-sm font-medium">Make sure the device is charged</span>
+                    <TTSText className="text-sm font-medium">Make sure the device is charged</TTSText>
                   </div>
                 </div>
               </motion.div>
@@ -187,13 +189,13 @@ export function RegisterInsoleForm() {
                   2
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-xl font-medium text-gray-800">Enable Bluetooth on your device</h3>
-                  <p className="text-gray-600">
+                  <TTSText className="text-xl font-medium text-gray-800">Enable Bluetooth on your device</TTSText>
+                  <TTSText className="text-gray-600">
                     Make sure your device's Bluetooth is turned on and discoverable
-                  </p>
+                  </TTSText>
                   <div className="flex items-center mt-2 text-blue-600">
                     <Bluetooth className="w-5 h-5 mr-2" />
-                    <span className="text-sm font-medium">Bluetooth must be enabled for pairing</span>
+                    <TTSText className="text-sm font-medium">Bluetooth must be enabled for pairing</TTSText>
                   </div>
                 </div>
               </motion.div>
@@ -209,13 +211,13 @@ export function RegisterInsoleForm() {
                   3
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-xl font-medium text-gray-800">Scan for available devices</h3>
-                  <p className="text-gray-600">
+                  <TTSText className="text-xl font-medium text-gray-800">Scan for available devices</TTSText>
+                  <TTSText className="text-gray-600">
                     Click the button below to scan for available insole devices in range
-                  </p>
+                  </TTSText>
                   <div className="flex items-center mt-2 text-blue-600">
                     <Search className="w-5 h-5 mr-2" />
-                    <span className="text-sm font-medium">Keep the device within 10 meters</span>
+                    <TTSText className="text-sm font-medium">Keep the device within 10 meters</TTSText>
                   </div>
                 </div>
               </motion.div>
@@ -234,12 +236,12 @@ export function RegisterInsoleForm() {
                   {isScanning ? (
                     <>
                       <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                      Scanning for Devices...
+                      <TTSText>Scanning for Devices...</TTSText>
                     </>
                   ) : (
                     <>
                       <Search className="w-5 h-5 mr-2" />
-                      Scan for Devices
+                      <TTSText>Scan for Devices</TTSText>
                     </>
                   )}
                 </Button>
@@ -269,9 +271,9 @@ export function RegisterInsoleForm() {
                       className="bg-gray-50 p-6 rounded-lg text-center"
                     >
                       <Smartphone className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                      <p className="text-gray-600">
+                      <TTSText className="text-gray-600">
                         No devices found. Make sure your device is powered on and in pairing mode.
-                      </p>
+                      </TTSText>
                     </motion.div>
                   )}
                   
@@ -299,20 +301,20 @@ export function RegisterInsoleForm() {
                               <Bluetooth className="w-5 h-5 text-blue-600" />
                             </div>
                             <div>
-                              <h4 className="font-medium text-gray-800">{device.name}</h4>
-                              <p className="text-sm text-gray-500">ID: {device.id}</p>
+                              <TTSText className="font-medium text-gray-800">{device.name}</TTSText>
+                              <TTSText className="text-sm text-gray-500">ID: {device.id}</TTSText>
                             </div>
                           </div>
                           
                           <div className="flex items-center gap-4">
                             <div className="text-right">
-                              <div className="text-sm font-medium text-gray-700">Signal</div>
-                              <div className="text-sm text-gray-500">{device.signal}</div>
+                              <TTSText className="text-sm font-medium text-gray-700">Signal</TTSText>
+                              <TTSText className="text-sm text-gray-500">{device.signal}</TTSText>
                             </div>
                             
                             <div className="text-right">
-                              <div className="text-sm font-medium text-gray-700">Battery</div>
-                              <div className="text-sm text-gray-500">{device.batteryLevel}%</div>
+                              <TTSText className="text-sm font-medium text-gray-700">Battery</TTSText>
+                              <TTSText className="text-sm text-gray-500">{device.batteryLevel}%</TTSText>
                             </div>
                             
                             {selectedDevice === device.id && (
@@ -378,8 +380,82 @@ export function RegisterInsoleForm() {
               </Alert>
               
               <div className="space-y-4">
+                {/* Serial Number */}
                 <div className="space-y-2">
-                  <Label htmlFor="deviceName" className="text-gray-700">Device Name</Label>
+                  <div className="flex items-center gap-2">
+                    <TTSLabel htmlFor="serialNumber" className="text-gray-700">
+                      {t.registerInsole.serialNumber}
+                    </TTSLabel>
+                  </div>
+                  <Input 
+                    id="serialNumber" 
+                    placeholder={t.registerInsole.enterSerialNumber}
+                    className="h-11"
+                  />
+                  <TTSText className="text-sm text-gray-500">
+                    Enter the serial number found on your device
+                  </TTSText>
+                </div>
+
+                {/* Email */}
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <TTSLabel htmlFor="email" className="text-gray-700">
+                      {t.registerInsole.email}
+                    </TTSLabel>
+                  </div>
+                  <Input 
+                    id="email" 
+                    type="email"
+                    placeholder={t.registerInsole.enterEmail}
+                    className="h-11"
+                  />
+                  <TTSText className="text-sm text-gray-500">
+                    Your email address for device notifications
+                  </TTSText>
+                </div>
+
+                {/* Phone */}
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <TTSLabel htmlFor="phone" className="text-gray-700">
+                      {t.registerInsole.phone}
+                    </TTSLabel>
+                  </div>
+                  <Input 
+                    id="phone" 
+                    type="tel"
+                    placeholder={t.registerInsole.enterPhone}
+                    className="h-11"
+                  />
+                  <TTSText className="text-sm text-gray-500">
+                    Your phone number for emergency alerts
+                  </TTSText>
+                </div>
+
+                {/* Full Name */}
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <TTSLabel htmlFor="fullName" className="text-gray-700">
+                      {t.registerInsole.fullName}
+                    </TTSLabel>
+                  </div>
+                  <Input 
+                    id="fullName" 
+                    placeholder={t.registerInsole.enterFullName}
+                    className="h-11"
+                  />
+                  <TTSText className="text-sm text-gray-500">
+                    Your full name for device registration
+                  </TTSText>
+                </div>
+                
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <TTSLabel htmlFor="deviceName" className="text-gray-700">
+                      Device Name
+                    </TTSLabel>
+                  </div>
                   <Input 
                     id="deviceName" 
                     value={deviceName} 
@@ -387,21 +463,21 @@ export function RegisterInsoleForm() {
                     placeholder="Enter a name for your device"
                     className="h-11"
                   />
-                  <p className="text-sm text-gray-500">
+                  <TTSText className="text-sm text-gray-500">
                     Choose a name that will help you identify this device
-                  </p>
+                  </TTSText>
                 </div>
                 
                 <div className="space-y-2">
-                  <Label className="text-gray-700">Device Type</Label>
+                  <TTSLabel className="text-gray-700">Device Type</TTSLabel>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="border border-blue-500 bg-blue-50 rounded-lg p-4 flex items-center">
                       <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mr-3">
                         <Check className="w-4 h-4 text-blue-600" />
                       </div>
                       <div>
-                        <div className="font-medium text-gray-800">Smart Insole</div>
-                        <div className="text-sm text-gray-500">Foot pressure monitoring</div>
+                        <TTSText className="font-medium text-gray-800">Smart Insole</TTSText>
+                        <TTSText className="text-sm text-gray-500">Foot pressure monitoring</TTSText>
                       </div>
                     </div>
                     
@@ -418,15 +494,15 @@ export function RegisterInsoleForm() {
                 </div>
                 
                 <div className="space-y-2 pt-4">
-                  <Label className="text-gray-700">Notification Preferences</Label>
+                  <TTSLabel className="text-gray-700">Notification Preferences</TTSLabel>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="border border-gray-200 rounded-lg p-4 flex items-center">
                       <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mr-3">
                         <Check className="w-4 h-4 text-blue-600" />
                       </div>
                       <div>
-                        <div className="font-medium text-gray-800">Pressure Alerts</div>
-                        <div className="text-sm text-gray-500">Notify when pressure is abnormal</div>
+                        <TTSText className="font-medium text-gray-800">Pressure Alerts</TTSText>
+                        <TTSText className="text-sm text-gray-500">Notify when pressure is abnormal</TTSText>
                       </div>
                     </div>
                     
@@ -435,8 +511,8 @@ export function RegisterInsoleForm() {
                         <Check className="w-4 h-4 text-blue-600" />
                       </div>
                       <div>
-                        <div className="font-medium text-gray-800">Battery Alerts</div>
-                        <div className="text-sm text-gray-500">Notify when battery is low</div>
+                        <TTSText className="font-medium text-gray-800">Battery Alerts</TTSText>
+                        <TTSText className="text-sm text-gray-500">Notify when battery is low</TTSText>
                       </div>
                     </div>
                   </div>
@@ -448,14 +524,14 @@ export function RegisterInsoleForm() {
                 variant="outline" 
                 onClick={() => setActiveTab("setup")}
               >
-                Back
+                <TTSText>Back</TTSText>
               </Button>
               <Button 
                 onClick={registerDevice} 
                 className="bg-blue-600 hover:bg-blue-700"
                 disabled={!deviceName.trim()}
               >
-                {t.registerInsole.register}
+                <TTSText>{t.registerInsole.register}</TTSText>
               </Button>
             </CardFooter>
           </Card>
@@ -486,27 +562,27 @@ export function RegisterInsoleForm() {
                 <Check className="w-12 h-12 text-green-600" />
               </motion.div>
               
-              <h3 className="text-xl font-medium text-gray-800 mb-2">
+              <TTSText className="text-xl font-medium text-gray-800 mb-2">
                 {deviceName} is now connected
-              </h3>
-              <p className="text-gray-600 text-center max-w-md mb-6">
+              </TTSText>
+              <TTSText className="text-gray-600 text-center max-w-md mb-6">
                 Your smart insole is now connected and ready to use. You can start monitoring your foot pressure data immediately.
-              </p>
+              </TTSText>
               
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 w-full max-w-md">
-                <h4 className="font-medium text-blue-800 mb-2">What's Next?</h4>
+                <TTSText className="font-medium text-blue-800 mb-2">What's Next?</TTSText>
                 <ul className="space-y-2 text-blue-700">
                   <li className="flex items-start">
                     <Check className="w-5 h-5 text-blue-600 mr-2 shrink-0" />
-                    <span>View your real-time foot pressure data on the dashboard</span>
+                    <TTSText>View your real-time foot pressure data on the dashboard</TTSText>
                   </li>
                   <li className="flex items-start">
                     <Check className="w-5 h-5 text-blue-600 mr-2 shrink-0" />
-                    <span>Set up custom alerts for pressure thresholds</span>
+                    <TTSText>Set up custom alerts for pressure thresholds</TTSText>
                   </li>
                   <li className="flex items-start">
                     <Check className="w-5 h-5 text-blue-600 mr-2 shrink-0" />
-                    <span>Schedule appointments with healthcare professionals</span>
+                    <TTSText>Schedule appointments with healthcare professionals</TTSText>
                   </li>
                 </ul>
               </div>
@@ -517,10 +593,10 @@ export function RegisterInsoleForm() {
                 variant="outline"
                 className="mr-4"
               >
-                {t.registerInsole.register}
+                <TTSText>{t.registerInsole.register}</TTSText>
               </Button>
               <Button className="bg-blue-600 hover:bg-blue-700">
-                Go to Dashboard
+                <TTSText>Go to Dashboard</TTSText>
               </Button>
             </CardFooter>
           </Card>
